@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 public class Size {
 	private int width;
