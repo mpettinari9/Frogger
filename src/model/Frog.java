@@ -13,6 +13,7 @@ public class Frog {
 	private int maxLives;
 	private final int screenwidth;
 	private final int screenHeight;
+	private HitBox hitBox;
 	
 	public Frog(String name, Direction direction, Size size, Position position, Map map, int lives) {
 		this.name = name;
@@ -24,6 +25,7 @@ public class Frog {
 		this.maxLives = DEFAULT_LIVES;
 		this.screenHeight = map.getHeight();
 		this.screenwidth = map.getWidth();
+		this.hitBox = new HitBox(position.getX(), position.getY(), size.getWidth(), size.getHeight());
 	}
 
 	public String getName() {
@@ -66,6 +68,9 @@ public class Frog {
 		return size;
 	}
 	
+	public HitBox getHitBox() {
+        return this.hitBox;
+    }
 	
 	public void setName(String name) {
 		this.name = name;
@@ -94,21 +99,34 @@ public class Frog {
     public void moveUp() {
         this.position.move(0, -MOVE_STEP);
         this.direction = Direction.UP;
+        updateHitBox();
     }
 
     public void moveDown() {
         this.position.move(0, MOVE_STEP);
         this.direction = Direction.DOWN; 
+        updateHitBox();
     }
 
     public void moveRight() {
         this.position.move(MOVE_STEP, 0);
         this.direction = Direction.RIGHT; 
+        updateHitBox();
     }
 
     public void moveLeft() {
         this.position.move(-MOVE_STEP, 0);
         this.direction = Direction.LEFT; 
+        updateHitBox();
     }
+    
+    public void updateHitBox() {
+        this.hitBox.setX(this.position.getX());
+        this.hitBox.setY(this.position.getY()); 
+        this.hitBox.setWidth(this.size.getWidth()); 
+        this.hitBox.setHeight(this.size.getHeight()); 
+     }
+    
+    
 
 }
