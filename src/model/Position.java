@@ -25,4 +25,8 @@ public class Position {
 		this.y = y;
 	}
 	
+    public void move(double dx, double dy) {
+    	this.x += dx;
+    	this.y += dy;
+    }
 }

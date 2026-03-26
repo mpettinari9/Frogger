@@ -91,5 +91,24 @@ public class Frog {
 		this.position.setY(y);
 	}
 	
+    public void moveUp() {
+        this.position.move(0, -MOVE_STEP);
+        this.direction = Direction.UP;
+    }
+
+    public void moveDown() {
+        this.position.move(0, MOVE_STEP);
+        this.direction = Direction.DOWN; 
+    }
+
+    public void moveRight() {
+        this.position.move(MOVE_STEP, 0);
+        this.direction = Direction.RIGHT; 
+    }
+
+    public void moveLeft() {
+        this.position.move(-MOVE_STEP, 0);
+        this.direction = Direction.LEFT; 
+    }
 
 }

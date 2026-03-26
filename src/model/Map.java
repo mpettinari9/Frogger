@@ -23,7 +23,6 @@ public class Map{
 	    return size.getHeight();
 	}
 
-	// getter per acqua
     public int getRiverTop() {
         return riverTop;
     }
