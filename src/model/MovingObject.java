@@ -44,9 +44,45 @@ public class MovingObject {
     	this.direction = direction;
     }
     
-
     public int getSpeed() {
     	return BASE_SPEED;
+    }
+    
+    private void updateHitBox() {
+        this.hitBox.setX(this.position.getX());
+        this.hitBox.setY(this.position.getY()); 
+        this.hitBox.setWidth(this.size.getWidth()); 
+        this.hitBox.setHeight(this.size.getHeight()); 
+    }
+    
+    public void updatePosition() {
+        if (direction == Direction.RIGHT) {
+            position.setX(position.getX() + BASE_SPEED);
+        } else {
+            position.setX(position.getX() - BASE_SPEED);
+        }
+        updateHitBox();
+
+        if (isOutOfBounds()) {
+            resetPositionAtStart();
+        }
+    }
+
+    private boolean isOutOfBounds() {
+        if (direction == Direction.RIGHT) {
+            return position.getX() > screenWidth;
+        } else {
+            return position.getX() + size.getWidth() < 0;
+        }
+    }
+
+    private void resetPositionAtStart() {
+        if (direction == Direction.RIGHT) {
+            position.setX(START_X_LEFT );
+        } else {
+            position.setX(START_X_RIGHT);
+        }
+        updateHitBox();
     }
 }
 
