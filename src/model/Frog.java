@@ -14,6 +14,8 @@ public class Frog {
 	private final int screenWidth;
 	private final int screenHeight;
 	private HitBox hitBox;
+	private Position initialPosition;
+	private Direction initialDirection;
 	
 	public Frog(String name, Direction direction, Size size, Position position, Map map, int lives) {
 		this.name = name;
@@ -26,6 +28,8 @@ public class Frog {
 		this.screenHeight = map.getHeight();
 		this.screenWidth = map.getWidth();
 		this.hitBox = new HitBox(position.getX(), position.getY(), size.getWidth(), size.getHeight());
+		this.initialPosition = new Position(position.getX(), position.getY());
+		this.initialDirection = direction;
 	}
 
 	public String getName() {
@@ -168,5 +172,24 @@ public class Frog {
         updateHitBox();
     }
     
+    public boolean isInWaterArea() {
+    	int centerY = this.position.getY() + this.size.getHeight() / 2;
+        return centerY >= map.getRiverTop() && centerY <= map.getRiverBottom();   }
+    
+    // Metodo per resettare la posizione iniziale
+    public void resetToInitialPosition() {
+        this.position.setX(initialPosition.getX());
+        this.position.setY(initialPosition.getY()); 
+        this.direction = initialDirection;
+        updateHitBox();
+    }
+    
+    public int getCenterX() {
+        return this.position.getX() + this.size.getWidth() / 2;
+    }
+
+    public int getCenterY() {
+        return this.position.getY() + this.size.getHeight() / 2;
+    }
 
 }
