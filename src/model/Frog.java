@@ -127,6 +127,17 @@ public class Frog {
         this.hitBox.setHeight(this.size.getHeight()); 
      }
     
+    public void loseLife() {
+    	this.lives--;
+    }
+    
+    public void resetLives() {
+    	this.lives = DEFAULT_LIVES;
+    }
+    
+    public boolean isDead() {
+    	return this.lives <= 0;
+    }
     
 
 }
