@@ -11,7 +11,7 @@ public class Frog {
 	private final Map map;
 	private int lives;
 	private int maxLives;
-	private final int screenwidth;
+	private final int screenWidth;
 	private final int screenHeight;
 	private HitBox hitBox;
 	
@@ -24,7 +24,7 @@ public class Frog {
 		this.lives = lives;
 		this.maxLives = DEFAULT_LIVES;
 		this.screenHeight = map.getHeight();
-		this.screenwidth = map.getWidth();
+		this.screenWidth = map.getWidth();
 		this.hitBox = new HitBox(position.getX(), position.getY(), size.getWidth(), size.getHeight());
 	}
 
@@ -137,6 +137,35 @@ public class Frog {
     
     public boolean isDead() {
     	return this.lives <= 0;
+    }
+    
+    public boolean isOutOfBounds() {
+        int centerX = position.getX() + size.getWidth() / 2;
+        int centerY = position.getY() + size.getHeight() / 2;
+        
+        return centerX < 0 || 
+               centerX > this.screenWidth ||
+               centerY < 0 || 
+               centerY > this.screenHeight;
+    }
+
+    public void correctPosition() {
+        int centerX = position.getX() + size.getWidth() / 2;
+        int centerY = position.getY() + size.getHeight() / 2;
+        
+        if (centerX < 0) {
+            position.setX(-size.getWidth() / 2);
+        }
+        if (centerX > this.screenWidth) {
+            position.setX(this.screenWidth - size.getWidth() / 2);
+        }
+        if (centerY < 0) {
+            position.setY(-size.getHeight() / 2);
+        }
+        if (centerY > this.screenHeight) {
+            position.setY(this.screenHeight - size.getHeight() / 2);
+        }
+        updateHitBox();
     }
     
 
