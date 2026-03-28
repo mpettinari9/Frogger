@@ -76,6 +76,38 @@ public class Game {
 		return earnLifeSpawnCycles;
 	}
 
+	public void moveFrogUp() {
+		frog.moveUp();
+	    frog.correctPosition();
+	}
 
+	public void moveFrogDown() {
+		frog.moveDown();
+	    frog.correctPosition();
+	}
+
+	public void moveFrogLeft() {
+		frog.moveLeft();
+	    frog.correctPosition();
+	}
+
+	public void moveFrogRight() {
+		frog.moveRight();
+	    frog.correctPosition();
+	}
+
+    public void addMovingObject(MovingObject obj) {
+        movingObjects.add(obj);
+    }
+
+    public void removeMovingObject(MovingObject obj) {
+        movingObjects.remove(obj);
+    }
+
+    public void updateMovingObjects() {
+        for (MovingObject obj : movingObjects) {
+            obj.updatePosition();
+        }
+    }
 	
 }
