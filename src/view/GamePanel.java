@@ -15,11 +15,25 @@ public class GamePanel extends JPanel {
         this.setSize(screenWidth, screenHeight);
         this.setLayout(null);
 
-        this.gamePanel = new JPanel();
+        this.gamePanel = new JPanel() {
+	        @Override
+	        protected void paintComponent(Graphics g) {
+	            super.paintComponent(g);
+	            g.drawImage(new ImageIcon("src/view/Asset/sfondogioco1.png").getImage(),
+	                        0, 0, this.getWidth(), this.getHeight(), this);
+	        }
+	    };
         this.gamePanel.setBounds(0, 0, screenWidth, (screenHeight * 85) / 100);
         this.gamePanel.setLayout(null);
 
-        this.infoPanel = new JPanel();
+        this.infoPanel = new JPanel() {
+	        @Override
+	        protected void paintComponent(Graphics g) {
+	            super.paintComponent(g);
+	            g.drawImage(new ImageIcon("src/view/Asset/sfondoInfo.png").getImage(),
+	                        0, 0, this.getWidth(), this.getHeight(), this);
+	        }
+	    };
         this.infoPanel.setBounds(0, this.gamePanel.getHeight(), screenWidth, screenHeight - this.gamePanel.getHeight());
         this.infoPanel.setLayout(null);
 
