@@ -10,6 +10,8 @@ public class GamePanel extends JPanel {
     private FrogSprite frogSprite; 
     private ArrayList<MovingObjectSprite> movingObjectSprites;
     private HeartSprite heartSprite;
+    private JProgressBar livesBar;
+    private JLabel timeLabel;
 
     public GamePanel(int screenWidth, int screenHeight, String frogName, int frogLifeValue, int frogLifeMaxValue) {
         this.setSize(screenWidth, screenHeight);
@@ -36,6 +38,26 @@ public class GamePanel extends JPanel {
 	    };
         this.infoPanel.setBounds(0, this.gamePanel.getHeight(), screenWidth, screenHeight - this.gamePanel.getHeight());
         this.infoPanel.setLayout(null);
+
+        this.timeLabel = new JLabel("00:00:00");
+        this.timeLabel.setBounds(0, 0, this.infoPanel.getWidth(), 30);
+        this.timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.infoPanel.add(timeLabel);
+        
+        JLabel nameLabel = new JLabel(frogName);
+        nameLabel.setBounds(0, this.timeLabel.getHeight(), this.infoPanel.getWidth(), this.infoPanel.getHeight() / 7);
+        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.infoPanel.add(nameLabel);
+
+        this.livesBar = new JProgressBar();
+        this.livesBar.setMaximum(frogLifeMaxValue);
+        this.livesBar.setValue(frogLifeValue);
+        this.livesBar.setStringPainted(true);
+        this.livesBar.setString(frogLifeValue + "/" + frogLifeMaxValue);
+        this.livesBar.setForeground(Color.RED);
+        this.livesBar.setBounds(20, nameLabel.getY() + nameLabel.getHeight(), 
+                                this.infoPanel.getWidth() - 40, this.infoPanel.getHeight() / 7);
+        this.infoPanel.add(this.livesBar);
 
         this.movingObjectSprites = new ArrayList<>();
         this.heartSprite = null;
