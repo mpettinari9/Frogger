@@ -103,28 +103,61 @@ public class GamePanel extends JPanel {
     }
     
     public void updateGameWindow(int frogX, int frogY, SpriteDirection frogDirection, 
-            int frogLife, int frogMaxLife,
-            ArrayList<Integer> movingX, ArrayList<Integer> movingY, 
-            long hours, long minutes, long seconds) {
-	if (frogSprite != null) {
-	// frogX e frogY sono già dall'angolo
-	frogSprite.setBounds(frogX, frogY, frogSprite.getWidth(), frogSprite.getHeight());
-	}
+            					 int frogLife, int frogMaxLife,
+            					 ArrayList<Integer> movingX, ArrayList<Integer> movingY, 
+            					 long hours, long minutes, long seconds) {
+		if (frogSprite != null) {
+			// frogX e frogY sono già dall'angolo
+			frogSprite.setBounds(frogX, frogY, frogSprite.getWidth(), frogSprite.getHeight());
+		}
+		
+		livesBar.setValue(frogLife);
+		livesBar.setMaximum(frogMaxLife);
+		livesBar.setString(frogLife + "/" + frogMaxLife);
+		
+		timeLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+		
+		// Aggiorna oggetti in movimento usando coordinate dall'angolo
+		for (int i = 0; i < movingObjectSprites.size(); i++) {
+			if (i < movingX.size() && i < movingY.size()) {
+				// movingX.get(i) e movingY.get(i) sono già dall'angolo
+				movingObjectSprites.get(i).updatePosition(movingX.get(i), movingY.get(i));
+			}
+		}
 	
-	livesBar.setValue(frogLife);
-	livesBar.setMaximum(frogMaxLife);
-	livesBar.setString(frogLife + "/" + frogMaxLife);
-	
-	timeLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-	
-	// Aggiorna oggetti in movimento usando coordinate dall'angolo
-	for (int i = 0; i < movingObjectSprites.size(); i++) {
-	if (i < movingX.size() && i < movingY.size()) {
-	// movingX.get(i) e movingY.get(i) sono già dall'angolo
-	movingObjectSprites.get(i).updatePosition(movingX.get(i), movingY.get(i));
-	}
-}
+		gamePanel.repaint();
+    }
+    
+    // Aggiunge oggetto usando coordinate dall'angolo
+    public void addMovingObject(MovingObjectTypeSprite type, int x, int y) {
+        MovingObjectSprite obj = new MovingObjectSprite(
+            "src/view/Asset/" + type.toString().toLowerCase() + ".png"
+        );
+        // x e y sono già dall'angolo
+        obj.setBounds(x, y, obj.getIcon().getIconWidth(), obj.getIcon().getIconHeight());
+        movingObjectSprites.add(obj);
+        gamePanel.add(obj);
+    }
+    
+    // Aggiunge cuore usando coordinate dall'angolo
+    public void addHeart(int x, int y) {
+        if (heartSprite == null) {
+            heartSprite = new HeartSprite("src/view/Asset/heart.png");
+            int size = 60;
+            // x e y sono già dall'angolo
+            heartSprite.setBounds(x, y, size, size);
+            gamePanel.add(heartSprite);
+        }
+    }
 
-gamePanel.repaint();
-}
+    public void removeHeart() {
+        if (heartSprite != null) {
+            gamePanel.remove(heartSprite);
+            heartSprite = null;
+            gamePanel.repaint();
+        }
+    }
+    
+    
+    
 }
