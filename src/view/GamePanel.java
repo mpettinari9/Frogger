@@ -65,6 +65,7 @@ public class GamePanel extends JPanel {
         this.add(this.gamePanel);
         this.add(this.infoPanel);
     }
+    
 
     public JPanel getGamePanel() {
         return gamePanel;
@@ -87,4 +88,43 @@ public class GamePanel extends JPanel {
         return movingObjectSprites; 
     }
 
+    public void setFrogSprite(int x, int y) {
+        if (this.frogSprite == null) {
+            String[] walkUp = {"src/view/Asset/frogup1.png", "src/view/Asset/frogup2.png"};
+            String[] walkDown = {"src/view/Asset/frogdown1.png", "src/view/Asset/frogdown2.png"};
+            String[] walkLeft = {"src/view/Asset/frogleft1.png", "src/view/Asset/frogleft2.png"};
+            String[] walkRight = {"src/view/Asset/frogright1.png", "src/view/Asset/frogright2.png"};
+
+            this.frogSprite = new FrogSprite(walkUp, walkDown, walkLeft, walkRight);
+            // x e y sono già dall'angolo
+            this.frogSprite.setBounds(x, y, 60, 60);
+            this.gamePanel.add(this.frogSprite);
+        }
+    }
+    
+    public void updateGameWindow(int frogX, int frogY, SpriteDirection frogDirection, 
+            int frogLife, int frogMaxLife,
+            ArrayList<Integer> movingX, ArrayList<Integer> movingY, 
+            long hours, long minutes, long seconds) {
+	if (frogSprite != null) {
+	// frogX e frogY sono già dall'angolo
+	frogSprite.setBounds(frogX, frogY, frogSprite.getWidth(), frogSprite.getHeight());
+	}
+	
+	livesBar.setValue(frogLife);
+	livesBar.setMaximum(frogMaxLife);
+	livesBar.setString(frogLife + "/" + frogMaxLife);
+	
+	timeLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+	
+	// Aggiorna oggetti in movimento usando coordinate dall'angolo
+	for (int i = 0; i < movingObjectSprites.size(); i++) {
+	if (i < movingX.size() && i < movingY.size()) {
+	// movingX.get(i) e movingY.get(i) sono già dall'angolo
+	movingObjectSprites.get(i).updatePosition(movingX.get(i), movingY.get(i));
+	}
+}
+
+gamePanel.repaint();
+}
 }
