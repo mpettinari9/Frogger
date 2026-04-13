@@ -20,10 +20,42 @@ public class GameController implements KeyListener, Runnable {
     private HashSet<Integer> pressedKeys;
     private Thread gameThread;
     private volatile boolean gameRunning = false;
+    private int startX = SCREEN_WIDTH / 2 - FROG_SIZE / 2;
+    private int startY= (SCREEN_HEIGHT * 82 / 100) - FROG_SIZE / 2;    
 
     public GameController() {
         this.gameWindow = new GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.pressedKeys = new HashSet<>();
+    }
+
+    private void startGame() {
+        String frogName = gameWindow.getTitlePanel().getFrogName();
+        
+        if (frogName.isEmpty()) {
+            frogName = "Frog";
+        }
+        
+        Map map = new Map(SCREEN_WIDTH, SCREEN_HEIGHT, RIVER_TOP, RIVER_BOTTOM);
+        gameModel = new Game(map);
+
+        Frog frog = new Frog(frogName, Direction.UP, new Size(FROG_SIZE, FROG_SIZE),
+                             new Position(startX, startY), map, 2);
+        gameModel.setFrog(frog);
+
+        GamePanel gamePanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, frog.getName(),
+                                            frog.getLives(), frog.getMaxLives());
+        gamePanel.setFrogSprite(startX, startY);
+        gamePanel.addKeyListener(this);
+        gamePanel.setFocusable(true);
+
+        gameWindow.setGamePanel(gamePanel);
+        gameWindow.showGame();
+        gamePanel.requestFocusInWindow();
+
+        if (gameThread == null || !gameThread.isAlive()) {
+            gameThread = new Thread(this);
+            gameThread.start();
+        }
     }
     
     @Override
