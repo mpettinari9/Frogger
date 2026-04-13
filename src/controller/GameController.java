@@ -42,6 +42,63 @@ public class GameController implements KeyListener, Runnable {
 
     @Override
     public void run() {
+        long drawInterval = 1000 / FPS;
+        gameRunning = true;
+        
+        while (gameRunning) {
+            long startTime = System.currentTimeMillis();
+
+            if (gameModel != null) {
+                 moveFrog();
+                
+               // gameModel.update();
+                
+                updateFrogSprite();
+                updateMovingObjects();
+                updateHeart();
+                updateFrog();
+
+//                if (gameModel.checkGameOver()) {
+//                    showGameOver();
+//                    break;
+//                }
+            }
+
+            long elapsed = System.currentTimeMillis() - startTime;
+            long sleepTime = drawInterval - elapsed;
+            if (sleepTime > 0) {
+                try { 
+                    Thread.sleep(sleepTime); 
+                } catch (InterruptedException e) { 
+                    e.printStackTrace(); 
+                }
+            }
+        }
     }
+
+	private void updateFrog() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void updateHeart() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void updateMovingObjects() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void updateFrogSprite() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void moveFrog() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
