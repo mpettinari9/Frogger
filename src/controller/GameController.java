@@ -26,6 +26,29 @@ public class GameController implements KeyListener, Runnable {
     public GameController() {
         this.gameWindow = new GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
         this.pressedKeys = new HashSet<>();
+        
+        this.gameWindow.addKeyListener(this);
+        this.gameWindow.setFocusable(true);
+        this.gameWindow.requestFocusInWindow();
+
+        this.gameWindow.getTitlePanel().getStartButton().addActionListener(e -> startGame());
+
+        this.gameWindow.getTitlePanel().getTutorialButton().addActionListener(e -> {
+            gameWindow.showTutorial();
+        });
+
+        this.gameWindow.getTutorialPanel().getBackButton().addActionListener(e -> {
+            gameWindow.showTitle();
+        });
+        
+        this.gameWindow.getResultPanel().getToTitlePanelButton().addActionListener(e -> {
+            gameRunning = false;
+            gameModel = null;
+            pressedKeys.clear();
+            
+            gameWindow.showTitle();
+        });
+    
     }
 
     private void startGame() {
