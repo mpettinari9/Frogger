@@ -151,9 +151,33 @@ public class GameController implements KeyListener, Runnable {
 		
 	}
 
-	private void moveFrog() {
-		// TODO Auto-generated method stub
-		
-	}
+    private void moveFrog() {
+        Frog frog = gameModel.getFrog();
+        if (frog.getLives() <= 0) {
+            gameWindow.getGamePanel().getFrogSprite().setSpriteActions(false);
+            return;
+        }
+
+        boolean isMoving = false;
+        
+        if (pressedKeys.contains(KeyEvent.VK_UP)) {
+            gameModel.moveFrogUp();
+            isMoving = true;
+        } 
+        if (pressedKeys.contains(KeyEvent.VK_LEFT)) {
+            gameModel.moveFrogLeft();
+            isMoving = true;
+        } 
+        if (pressedKeys.contains(KeyEvent.VK_DOWN)) {
+            gameModel.moveFrogDown();
+            isMoving = true;
+        } 
+        if (pressedKeys.contains(KeyEvent.VK_RIGHT)) {
+            gameModel.moveFrogRight();
+            isMoving = true;
+        }
+        
+        gameWindow.getGamePanel().getFrogSprite().setSpriteActions(isMoving);
+    }
 
 }
