@@ -2,7 +2,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import java.time.LocalDateTime;
 
 public class Game {
@@ -170,5 +169,47 @@ public class Game {
         movingObjects.add(obj);    
     }
 
-	
+	// Metodo per la logica della collisione tra Frog e MovingObject
+    private void movingObjectCollision(MovingObject obj) {
+        switch (obj.getMovingObjectType()) {
+        case CAR:
+        case TRUCK:
+            if (this.frog.getLives() > 1) {
+                // Hai più di 1 vita: perdi una vita e resetti
+                this.frog.loseLife();
+                this.frog.resetToInitialPosition();
+                this.death = ""; // Continui a giocare
+            } else {
+                // Hai solo 1 vita: muori
+                this.frog.loseLife();
+                this.frog.resetToInitialPosition();
+                this.death = "Hit by " + obj.getMovingObjectType().name().toLowerCase() + " - " + formatMatchTime();
+            }
+            break;
+            
+        case TURTLE:
+        case TRUNK:
+           
+            break;
+        }
+    }
+    
+    private String formatMatchTime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// Metodo per la verifica della collisione con gli oggetti
+    public boolean checkMovingObjectCollision() {
+        if (frog == null) 
+        	return false;
+        
+        for (MovingObject obj : movingObjects) {
+            if (frog.getHitBox().intersects(obj.getHitBox())) {
+                movingObjectCollision(obj);
+                return true;
+            }
+        }
+        return false;
+    }
 }
