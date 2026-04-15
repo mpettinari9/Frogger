@@ -20,7 +20,11 @@ public class MovingObject {
         this.hitBox = new HitBox(position.getX(), position.getY(), size.getWidth(), size.getHeight());
     }  
 
-    public HitBox getHitBox() {
+    public MovingObject(int x, int y, MovingObjectType type, Map map, int spawnOffset) {
+        this(new Position(x, y), type, map, spawnOffset);
+    }
+
+	public HitBox getHitBox() {
         return hitBox;
     }
 
