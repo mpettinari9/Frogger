@@ -212,4 +212,47 @@ public class Game {
         }
         return false;
     }
+    
+    // Metodo per essere trasportato da un oggetto (tronchi/tartarughe)
+    public void onWaterObject(MovingObject waterObj) {
+    	
+    }
+    
+    // Se la rana è in acqua senza piattafroma, muore.
+    public void checkWaterCollision() {
+        if (frog == null || frog.getLives() <= 0) return; 
+        
+        if (frog.isInWaterArea()) {
+            boolean onPlatform = false;
+            MovingObject platformObject = null;
+            
+            for (MovingObject obj : movingObjects) {
+                MovingObjectType type = obj.getMovingObjectType();
+                if ((type == MovingObjectType.TURTLE || type == MovingObjectType.TRUNK) 
+                    && frog.getHitBox().intersects(obj.getHitBox())) {
+                    onPlatform = true;
+                    platformObject = obj;
+                    break;
+                }
+            }
+            
+            if (onPlatform && platformObject != null) {
+                onWaterObject(platformObject);
+                frog.correctPosition();
+            } else {
+                if (frog.getLives() > 1) {
+                    frog.loseLife();
+                    frog.resetToInitialPosition();
+                    death = "";
+                } else {
+                    frog.loseLife();
+                    frog.resetToInitialPosition();
+                    if (death.isEmpty()) {
+                        death = "Drowned in water - " + formatMatchTime();
+                    }
+                }
+            }
+        }
+    }
+    
 }
