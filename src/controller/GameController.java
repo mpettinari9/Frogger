@@ -3,6 +3,8 @@ package controller;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 import model.*;
 import view.*;
@@ -141,10 +143,42 @@ public class GameController implements KeyListener, Runnable {
 		
 	}
 
+    private MovingObjectTypeSprite modelToViewMovingObjectTypeConverter(MovingObjectType type) {
+        switch (type) {
+            case CAR: return MovingObjectTypeSprite.CAR;
+            case TRUCK: return MovingObjectTypeSprite.TRUCK;
+            case TRUNK: return MovingObjectTypeSprite.TRUNK;
+            case TURTLE: return MovingObjectTypeSprite.TURTLE;
+            default: return MovingObjectTypeSprite.CAR;
+        }
+    }
+    
 	private void updateMovingObjects() {
-		// TODO Auto-generated method stub
-		
-	}
+        ArrayList<MovingObject> modelObjects = gameModel.getMovingObjects();
+        ArrayList<MovingObjectSprite> viewSprites = gameWindow.getGamePanel().getMovingObjectSprites();
+
+        // Aggiungo nuovi oggetti usando coordinate dall'angolo
+        for (int i = viewSprites.size(); i < modelObjects.size(); i++) {
+            MovingObject obj = modelObjects.get(i);
+            gameWindow.getGamePanel().addMovingObject(
+                modelToViewMovingObjectTypeConverter(obj.getMovingObjectType()),
+                obj.getPosition().getX(), 
+                obj.getPosition().getY()
+            );
+            viewSprites.get(i).setSpriteActions(true);
+        }
+
+        // Aggiorno posizioni usando coordinate dall'angolo
+        for (int i = 0; i < Math.min(viewSprites.size(), modelObjects.size()); i++) {
+            MovingObject obj = modelObjects.get(i);
+            viewSprites.get(i).setBounds(
+                obj.getPosition().getX(),
+                obj.getPosition().getY(),
+                viewSprites.get(i).getWidth(),
+                viewSprites.get(i).getHeight()
+            );
+        }
+    }
 
 	private void updateFrogSprite() {
 		// TODO Auto-generated method stub
