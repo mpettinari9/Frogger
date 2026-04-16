@@ -213,11 +213,6 @@ public class Game {
         return false;
     }
     
-    // Metodo per essere trasportato da un oggetto (tronchi/tartarughe)
-    public void onWaterObject(MovingObject waterObj) {
-    	
-    }
-    
     // Se la rana è in acqua senza piattafroma, muore.
     public void checkWaterCollision() {
         if (frog == null || frog.getLives() <= 0) return; 
@@ -254,5 +249,19 @@ public class Game {
             }
         }
     }
+    
+ // Metodo per essere trasportato da un oggetto (tronchi/tartarughe)
+    public void onWaterObject(MovingObject waterObj) {
+    	
+        if (waterObj.getDirection() == Direction.RIGHT) {
+        	frog.setX(frog.getX() + waterObj.getSpeed());
+        	
+  
+        } else {
+        	frog.setX(frog.getX() - waterObj.getSpeed());
+        }
+        frog.updateHitBox();
+    }
+    
     
 }
