@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.Random;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class Game {
 	public static final int EARN_LIFE_SPAWN_INTERVAL = 15; 
@@ -250,7 +251,7 @@ public class Game {
         }
     }
     
- // Metodo per essere trasportato da un oggetto (tronchi/tartarughe)
+    // Metodo per essere trasportato da un oggetto (tronchi/tartarughe)
     public void onWaterObject(MovingObject waterObj) {
     	
         if (waterObj.getDirection() == Direction.RIGHT) {
@@ -262,6 +263,25 @@ public class Game {
         }
         frog.updateHitBox();
     }
+    
+	public void setLastEarnLifeSpawnTime(LocalDateTime time) {
+	    this.lastEarnLifeSpawnTime = time;
+	}
+	
+    public void earnLifeSpawn() {
+	    LocalDateTime now = LocalDateTime.now();
+	    long secondsSinceLastSpawn = this.lastEarnLifeSpawnTime.until(now, ChronoUnit.SECONDS);
+
+	    if (!this.isEarnLifeSpawned && secondsSinceLastSpawn >= EARN_LIFE_SPAWN_INTERVAL) {
+	    	int x = rnd.nextInt(0, map.getWidth() - EarnLife.getHeartWidth());
+	    	int y = rnd.nextInt(0, map.getHeight() - EarnLife.getHeartHeight());
+
+	        this.earnLife = new EarnLife(x, y);
+	        this.isEarnLifeSpawned = true;
+	        this.earnLifeSpawnCycles++;
+	        this.lastEarnLifeSpawnTime = now; // reset timer
+	    }
+	}
     
     
 }
