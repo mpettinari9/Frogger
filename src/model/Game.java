@@ -283,7 +283,6 @@ public class Game {
 	    }
 	}
     
-
 	// Metodo per la verifica della collisione con i cuori
 	public boolean checkHeartCollision() {
 		 if (frog == null || earnLife == null || !isEarnLifeSpawned) 
@@ -296,6 +295,32 @@ public class Game {
 	            return true;
 	        }
 	        return false;
+	}
+	
+	//Calcola quanti secondi sono passati tra startTime e time
+	//Logica che restituisce la rappresentazione “clock-like” (modulo 60/24).
+	private long getDurationSeconds(LocalDateTime time) {
+		return this.startTime.until(time, ChronoUnit.SECONDS)%60;
+	}
+		
+	private long getDurationMinutes(LocalDateTime time) {
+		return this.startTime.until(time, ChronoUnit.MINUTES)%60;
+	}
+
+	private long getDurationHours(LocalDateTime time) {
+		return this.startTime.until(time, ChronoUnit.HOURS)%24;
+	}
+		
+	public long getMatchDurationSeconds() {
+		return this.getDurationSeconds(LocalDateTime.now());
+	}
+		
+	public long getMatchDurationMinutes() {
+		return this.getDurationMinutes(LocalDateTime.now());
+	}
+
+	public long getMatchDurationHours() {
+		return this.getDurationHours(LocalDateTime.now());
 	}
     
 }
