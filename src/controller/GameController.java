@@ -138,11 +138,6 @@ public class GameController implements KeyListener, Runnable {
 		
 	}
 
-	private void updateHeart() {
-		// TODO Auto-generated method stub
-		
-	}
-
     private MovingObjectTypeSprite modelToViewMovingObjectTypeConverter(MovingObjectType type) {
         switch (type) {
             case CAR: return MovingObjectTypeSprite.CAR;
@@ -212,6 +207,15 @@ public class GameController implements KeyListener, Runnable {
         }
         
         gameWindow.getGamePanel().getFrogSprite().setSpriteActions(isMoving);
+    }
+    
+    private void updateHeart() {
+        if (gameModel.isEarnLifeSpawned() && gameWindow.getGamePanel().getHeartSprite() == null) {
+            EarnLife heart = gameModel.getEarnLife();
+            gameWindow.getGamePanel().addHeart(heart.getX(), heart.getY());
+        } else if (!gameModel.isEarnLifeSpawned() && gameWindow.getGamePanel().getHeartSprite() != null) {
+            gameWindow.getGamePanel().removeHeart();
+        }
     }
 
 }

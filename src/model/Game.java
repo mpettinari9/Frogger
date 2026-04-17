@@ -283,5 +283,19 @@ public class Game {
 	    }
 	}
     
+
+	// Metodo per la verifica della collisione con i cuori
+	public boolean checkHeartCollision() {
+		 if (frog == null || earnLife == null || !isEarnLifeSpawned) 
+	            return false;
+	        
+	        if (frog.getHitBox().intersects(earnLife.getHitBox())) {
+	            frog.resetLives();
+	            isEarnLifeSpawned = false; // CAMPO MODIFICATO SOLO QUI PER FAR CHE IL CUORE SCOMPAIA QUANDO IL GIOCATORE LO RACCOGLIE
+	            earnLife = null;
+	            return true;
+	        }
+	        return false;
+	}
     
 }
