@@ -3,6 +3,7 @@ package controller;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import model.*;
@@ -132,11 +133,6 @@ public class GameController implements KeyListener, Runnable {
         }
     }
 
-	private void updateFrog() {
-		// TODO Auto-generated method stub
-		
-	}
-
     private MovingObjectTypeSprite modelToViewMovingObjectTypeConverter(MovingObjectType type) {
         switch (type) {
             case CAR: return MovingObjectTypeSprite.CAR;
@@ -173,11 +169,6 @@ public class GameController implements KeyListener, Runnable {
             );
         }
     }
-
-	private void updateFrogSprite() {
-		// TODO Auto-generated method stub
-		
-	}
 
     private void moveFrog() {
         Frog frog = gameModel.getFrog();
@@ -224,5 +215,50 @@ public class GameController implements KeyListener, Runnable {
         );
         gameWindow.showResults();
     }
+    
+    private SpriteDirection modelToViewDirectionConverter(Direction dir) {
+        switch (dir) {
+            case UP: return SpriteDirection.UP;
+            case DOWN: return SpriteDirection.DOWN;
+            case LEFT: return SpriteDirection.LEFT;
+            default: return SpriteDirection.RIGHT;
+        }
+    }
+    
+    private void updateFrogSprite() {
+        Frog frog = gameModel.getFrog();
+        if (frog == null || gameWindow.getGamePanel().getFrogSprite() == null) 
+            return;
 
+        gameWindow.getGamePanel().getFrogSprite().setBounds(
+            frog.getPosition().getX(), 
+            frog.getPosition().getY(), 
+            FROG_SIZE, 
+            FROG_SIZE
+        );
+        gameWindow.getGamePanel().getFrogSprite().setDirection(
+            modelToViewDirectionConverter(frog.getDirection())
+        );
+        gameWindow.getGamePanel().getFrogSprite().performAnimation();
+    }
+
+    private void updateFrog() {
+        Frog frog = gameModel.getFrog();
+        gameWindow.getGamePanel().updateGameWindow(
+            frog.getPosition().getX(),
+            frog.getPosition().getY(),
+            modelToViewDirectionConverter(frog.getDirection()),
+            frog.getLives(),
+            frog.getMaxLives(),
+            gameModel.getMovingObjects().stream()
+                .map(o -> o.getPosition().getX())
+                .collect(Collectors.toCollection(ArrayList::new)),
+            gameModel.getMovingObjects().stream()
+                .map(o -> o.getPosition().getY())
+                .collect(Collectors.toCollection(ArrayList::new)),
+            gameModel.getMatchDurationHours(),
+            gameModel.getMatchDurationMinutes(),
+            gameModel.getMatchDurationSeconds()
+        );
+    }
 }
