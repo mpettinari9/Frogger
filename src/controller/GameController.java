@@ -216,5 +216,13 @@ public class GameController implements KeyListener, Runnable {
             gameWindow.getGamePanel().removeHeart();
         }
     }
+    
+    private void showGameOver() {
+        Frog frog = gameModel.getFrog();
+        gameWindow.getResultPanel().setFrogResultText(
+            frog.getName() + ": Tempo " + gameModel.getDeath()
+        );
+        gameWindow.showResults();
+    }
 
 }
