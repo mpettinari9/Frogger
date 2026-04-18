@@ -194,11 +194,6 @@ public class Game {
             break;
         }
     }
-    
-    private String formatMatchTime() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	// Metodo per la verifica della collisione con gli oggetti
     public boolean checkMovingObjectCollision() {
@@ -321,6 +316,14 @@ public class Game {
 
 	public long getMatchDurationHours() {
 		return this.getDurationHours(LocalDateTime.now());
+	}
+	
+	private String formatMatchTime() {
+	    return String.format("%02d:%02d:%02d",
+	        getMatchDurationHours(),
+	        getMatchDurationMinutes(),
+	        getMatchDurationSeconds()
+	    );
 	}
     
 }
