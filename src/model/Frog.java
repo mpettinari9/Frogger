@@ -32,6 +32,10 @@ public class Frog {
 		this.initialDirection = direction;
 	}
 
+	public Frog(String name, Direction direction, Size size, int x, int y, Map map, int lives) {
+		this(name, direction, size, new Position(x, y), map, lives);
+	}
+	
 	public String getName() {
 		return name;
 	}
