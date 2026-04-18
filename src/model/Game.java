@@ -325,5 +325,18 @@ public class Game {
 	        getMatchDurationSeconds()
 	    );
 	}
+	
+	public boolean checkGameOver() {
+		if (frog == null) return false;
+		
+		boolean hasLost = frog.getLives() <= 0; 
+		boolean hasWon = frog.getY() <= 0;	
+		
+		if ((hasLost || hasWon) && death.isEmpty() ) 
+	        death = formatMatchTime();
+	        
+		return hasLost || hasWon;
+	}
+	
     
 }
