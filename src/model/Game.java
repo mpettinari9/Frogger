@@ -338,5 +338,14 @@ public class Game {
 		return hasLost || hasWon;
 	}
 	
+	public void update() {
+		spawnMovingObject();
+	    updateMovingObjects();
+	    checkMovingObjectCollision();  // Prima controlla collisioni con auto/camion
+	    checkWaterCollision();          // POI controlla acqua e piattaforme
+	    earnLifeSpawn();
+	    checkHeartCollision();
+	    checkGameOver();
+	}
     
 }
