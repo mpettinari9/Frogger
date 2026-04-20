@@ -1,11 +1,11 @@
 package model;
 
 public enum MovingObjectType {
-    CAR(80, 50),
-    TRUCK(120, 50),
-    TURTLE(80, 50),
-    TRUNK(120, 50);
-
+	CAR(55, 45),
+	TRUCK(107, 45),
+	TURTLE(180, 50),
+	TRUNK(196, 50);
+	
     private final int width;
     private final int height;
 

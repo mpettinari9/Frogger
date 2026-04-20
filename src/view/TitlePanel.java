@@ -35,9 +35,9 @@ public class TitlePanel extends JPanel {
 		this.tutorialButton.setFont(new Font("DIALOG", Font.BOLD, 24));
 		this.tutorialButton.setBounds(screenHeight/3, screenHeight*8/10, screenWidth/3, screenHeight/10);
 		
-		this.add(nameLabel);
-		this.add(nameField);
-		this.add(tutorialButton);
+		this.add(this.nameLabel);
+		this.add(this.nameField);
+		this.add(this.tutorialButton);
 		this.add(this.startButton);
 	}
 	

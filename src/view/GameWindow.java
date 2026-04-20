@@ -19,7 +19,7 @@ public class GameWindow extends JFrame{
 		this.setResizable(false);
 		this.setLayout(null);
 		this.setLocationRelativeTo(null);
-		this.setVisible(true);
+		
 		
 		this.titlePanel = new TitlePanel(width, height);
 		this.resultPanel = new ResultPanel(width, height);
