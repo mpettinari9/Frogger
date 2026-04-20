@@ -108,17 +108,17 @@ public class GameController implements KeyListener, Runnable {
             if (gameModel != null) {
                  moveFrog();
                 
-               // gameModel.update();
+                gameModel.update();
                 
                 updateFrogSprite();
                 updateMovingObjects();
                 updateHeart();
                 updateFrog();
 
-//                if (gameModel.checkGameOver()) {
-//                    showGameOver();
-//                    break;
-//                }
+                if (gameModel.checkGameOver()) {
+                    showGameOver();
+                    break;
+                }
             }
 
             long elapsed = System.currentTimeMillis() - startTime;

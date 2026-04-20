@@ -17,7 +17,7 @@ public class TitlePanel extends JPanel {
 		this.startButton.setBackground(Color.green);
 		this.startButton.setFont(new Font("DIALOG", Font.BOLD, 24));
 		this.startButton.setBounds(screenWidth/3, screenHeight*6/10, screenWidth/3, screenHeight/10);
-		this.add(this.startButton);
+		
 		
         this.nameLabel = new JLabel("Inserisci il tuo nome:");
         this.nameLabel.setFont(new Font("DIALOG", Font.BOLD, 24));
@@ -38,6 +38,7 @@ public class TitlePanel extends JPanel {
 		this.add(nameLabel);
 		this.add(nameField);
 		this.add(tutorialButton);
+		this.add(this.startButton);
 	}
 	
 	public JButton getStartButton(){

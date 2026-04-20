@@ -25,15 +25,19 @@ public class GameWindow extends JFrame{
 		this.resultPanel = new ResultPanel(width, height);
 		this.tutorialPanel = new TutorialPanel(width, height);  
 		
+		this.add(this.titlePanel);
+		
+		this.setVisible(true);
 		 this.gamePanel = new GamePanel(width,
 		            height,
 		            "Frog",
 		            Frog.DEFAULT_LIVES,
 		            Frog.DEFAULT_LIVES);
-		
+	      
 		 this.gamePanel.setVisible(false);
-		 this.add(this.titlePanel);
-		 this.add(gamePanel);
+	        this.add(gamePanel);
+
+	        this.setVisible(true);
 
 	}
 	public void showTitle() {
