@@ -28,12 +28,12 @@ public class TitlePanel extends JPanel {
 		this.nameField.setBackground(Color.green);
 		this.nameField.setHorizontalAlignment(JTextField.CENTER);
 		this.nameField.setFont(new Font("DIALOG", Font.BOLD, 24));
-		this.nameField.setBounds(screenHeight/3, screenHeight*5/10, screenWidth/3, screenHeight/10);
+		this.nameField.setBounds(screenWidth/3, screenHeight*5/10, screenWidth/3, screenHeight/10);
 		
 		this.tutorialButton = new JButton("TUTORIAL");
 		this.tutorialButton.setBackground(Color.BLUE);
 		this.tutorialButton.setFont(new Font("DIALOG", Font.BOLD, 24));
-		this.tutorialButton.setBounds(screenHeight/3, screenHeight*8/10, screenWidth/3, screenHeight/10);
+		this.tutorialButton.setBounds(screenWidth/3, screenHeight*8/10, screenWidth/3, screenHeight/10);
 		
 		this.add(this.nameLabel);
 		this.add(this.nameField);
