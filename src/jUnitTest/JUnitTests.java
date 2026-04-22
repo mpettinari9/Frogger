@@ -61,4 +61,25 @@ public class JUnitTests {
 		HitBox b = new HitBox(50, 0, 50, 50);
 		assertFalse(a.intersects(b));
 	}
+	
+	@Test
+	public void testLoseLife() {
+		int initialLives = frog.getLives();
+		frog.loseLife();
+		assertEquals(initialLives -1, frog.getLives());
+	}
+	
+	@Test
+	public void testIsDead() {
+		frog.loseLife();
+		frog.loseLife();
+		assertTrue(frog.isDead());
+	}
+	
+	@Test 
+	public void testResetLives() {
+		frog.loseLife();
+		frog.resetLives();
+		assertEquals(Frog.DEFAULT_LIVES, frog.getLives());
+	}
 }
