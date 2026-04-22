@@ -44,4 +44,21 @@ public class JUnitTests {
 		assertEquals(Direction.RIGHT, frog.getDirection());
 	}
 	
+	public void testHitBoxIntersects() {
+		HitBox a = new HitBox(0, 0, 50, 50);
+		HitBox b = new HitBox(25, 25, 50, 50);
+		assertTrue(a.intersects(b));
+	}
+	
+	public void testHitBoxNoIntersect() {
+		HitBox a = new HitBox(0, 0, 50, 50);
+		HitBox b = new HitBox(100, 100, 50, 50);
+		assertFalse(a.intersects(b));
+	}
+	
+	public void testHitBoxAdjacentNoIntersect() {
+		HitBox a = new HitBox(0, 0, 50, 50);
+		HitBox b = new HitBox(50, 0, 50, 50);
+		assertFalse(a.intersects(b));
+	}
 }
