@@ -82,4 +82,17 @@ public class JUnitTests {
 		frog.resetLives();
 		assertEquals(Frog.DEFAULT_LIVES, frog.getLives());
 	}
+	
+	public void testInWaterArea() {
+		//riverTop = 40, riverBottom = 290, center della rana = y + 25
+		Frog waterFrog = new Frog("W", Direction.UP,  new Size(50, 50), new Position(100, 140), map, 2);
+		//center = 165 -> dentro [40, 290]
+		assertTrue(waterFrog.isInWaterArea());
+	}
+	
+	public void testNotInWaterArea() {
+		Frog landFrog = new Frog("L", Direction.UP,  new Size(50, 50), new Position(100, 500), map, 2);
+		//center = 525 -> fuori [40, 290]
+		assertFalse(landFrog.isInWaterArea());
+	}
 }
