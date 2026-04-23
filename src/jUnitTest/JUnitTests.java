@@ -121,4 +121,24 @@ public class JUnitTests {
 		obj.updatePosition();
 		assertTrue(obj.getPosition().getX() < initialX);
 	}
+	
+	public void testCheckMovingObjectCollisionWithCar() {
+		Game game = new Game(map);
+		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(100, 500), map, 2);
+		game.setFrog(f);
+		MovingObject car = new MovingObject(100, 500, MovingObjectType.CAR, map, 0);
+		car.setDirection(Direction.RIGHT);
+		game.addMovingObject(car);
+		assertTrue(game.checkMovingObjectCollision());
+	}
+	
+	public void testCheckMovingObjectNoCollision() {
+		Game game = new Game(map);
+		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(0, 500), map, 2);
+		game.setFrog(f);
+		MovingObject car = new MovingObject(900, 500, MovingObjectType.CAR, map, 0);
+		car.setDirection(Direction.RIGHT);
+		game.addMovingObject(car);
+		assertFalse(game.checkMovingObjectCollision());
+	}
 }
