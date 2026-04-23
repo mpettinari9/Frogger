@@ -23,6 +23,7 @@ public class JUnitTests {
 		assertEquals(Direction.UP, frog.getDirection());
 	}
 	
+	@Test
 	public void testMoveDown() {
 		int initialY = frog.getY();
 		frog.moveDown();
@@ -30,6 +31,7 @@ public class JUnitTests {
 		assertEquals(Direction.DOWN, frog.getDirection());
 	}
 	
+	@Test
 	public void testMoveLeft() {
 		int initialX = frog.getX();
 		frog.moveLeft();
@@ -37,6 +39,7 @@ public class JUnitTests {
 		assertEquals(Direction.LEFT, frog.getDirection());
 	}
 	
+	@Test
 	public void testMoveRight() {
 		int initialX = frog.getX();
 		frog.moveRight();
@@ -44,18 +47,21 @@ public class JUnitTests {
 		assertEquals(Direction.RIGHT, frog.getDirection());
 	}
 	
+	@Test
 	public void testHitBoxIntersects() {
 		HitBox a = new HitBox(0, 0, 50, 50);
 		HitBox b = new HitBox(25, 25, 50, 50);
 		assertTrue(a.intersects(b));
 	}
 	
+	@Test
 	public void testHitBoxNoIntersect() {
 		HitBox a = new HitBox(0, 0, 50, 50);
 		HitBox b = new HitBox(100, 100, 50, 50);
 		assertFalse(a.intersects(b));
 	}
 	
+	@Test
 	public void testHitBoxAdjacentNoIntersect() {
 		HitBox a = new HitBox(0, 0, 50, 50);
 		HitBox b = new HitBox(50, 0, 50, 50);
@@ -83,6 +89,7 @@ public class JUnitTests {
 		assertEquals(Frog.DEFAULT_LIVES, frog.getLives());
 	}
 	
+	@Test
 	public void testInWaterArea() {
 		//riverTop = 40, riverBottom = 290, center della rana = y + 25
 		Frog waterFrog = new Frog("W", Direction.UP,  new Size(50, 50), new Position(100, 140), map, 2);
@@ -90,9 +97,28 @@ public class JUnitTests {
 		assertTrue(waterFrog.isInWaterArea());
 	}
 	
+	@Test
 	public void testNotInWaterArea() {
 		Frog landFrog = new Frog("L", Direction.UP,  new Size(50, 50), new Position(100, 500), map, 2);
 		//center = 525 -> fuori [40, 290]
 		assertFalse(landFrog.isInWaterArea());
+	}
+	
+	@Test
+	public void testMovingObjectMovesRight() {
+		MovingObject obj = new MovingObject(100, 500, MovingObjectType.CAR, map, 0);
+		obj.setDirection(Direction.RIGHT);
+		int initialX = obj.getPosition().getX();
+		obj.updatePosition();
+		assertTrue(obj.getPosition().getX() > initialX);
+	}
+	
+	@Test
+	public void testMovingObjectMovesLeft() {
+		MovingObject obj = new MovingObject(100, 390, MovingObjectType.TRUCK, map, 0);
+		obj.setDirection(Direction.LEFT);
+		int initialX = obj.getPosition().getX();
+		obj.updatePosition();
+		assertTrue(obj.getPosition().getX() < initialX);
 	}
 }
