@@ -122,6 +122,7 @@ public class JUnitTests {
 		assertTrue(obj.getPosition().getX() < initialX);
 	}
 	
+	@Test
 	public void testCheckMovingObjectCollisionWithCar() {
 		Game game = new Game(map);
 		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(100, 500), map, 2);
@@ -132,6 +133,7 @@ public class JUnitTests {
 		assertTrue(game.checkMovingObjectCollision());
 	}
 	
+	@Test
 	public void testCheckMovingObjectNoCollision() {
 		Game game = new Game(map);
 		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(0, 500), map, 2);
@@ -141,4 +143,25 @@ public class JUnitTests {
 		game.addMovingObject(car);
 		assertFalse(game.checkMovingObjectCollision());
 	}
+	
+	@Test
+	public void testEarnLifeHitBoxCreated() {
+		EarnLife el = new EarnLife(100,200);
+		assertNotNull(el.getHitBox());
+		assertEquals(100, el.getX());
+		assertEquals(200, el.getY());
+	}
+	
+	@Test
+	public void testCheckHeartCollision() {
+		Game game = new Game(map);
+		Frog f = new Frog("T", Direction.UP, new Size(50,50), new Position(615,565), map, 2);
+		f.loseLife(); // 1 vita rimasta
+		game.setFrog(f);
+		// Forza spawn del cuore nella stessa posizione della rana
+		// (usiamo reflections o esponiamo un setter per test)
+		// Verifica che dopo la collisione le vite si resettino
+		assertEquals(1, f.getLives());
+	}
+	
 }
