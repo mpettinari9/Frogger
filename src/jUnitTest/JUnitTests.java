@@ -8,13 +8,13 @@ import model.*;
 public class JUnitTests {
 	private Map map;
 	private Frog frog;
-	
+
 	@BeforeEach
 	public void setup() {
 		map = new Map(1280, 720, 40, 290);
 		frog = new Frog("Test", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
 	}
-	
+
 	@Test
 	public void testMoveUp() {
 		int initialY = frog.getY();
@@ -22,7 +22,7 @@ public class JUnitTests {
 		assertTrue(frog.getY() < initialY);
 		assertEquals(Direction.UP, frog.getDirection());
 	}
-	
+
 	@Test
 	public void testMoveDown() {
 		int initialY = frog.getY();
@@ -30,7 +30,7 @@ public class JUnitTests {
 		assertTrue(frog.getY() > initialY);
 		assertEquals(Direction.DOWN, frog.getDirection());
 	}
-	
+
 	@Test
 	public void testMoveLeft() {
 		int initialX = frog.getX();
@@ -38,7 +38,7 @@ public class JUnitTests {
 		assertTrue(frog.getX() < initialX);
 		assertEquals(Direction.LEFT, frog.getDirection());
 	}
-	
+
 	@Test
 	public void testMoveRight() {
 		int initialX = frog.getX();
@@ -46,64 +46,64 @@ public class JUnitTests {
 		assertTrue(frog.getX() > initialX);
 		assertEquals(Direction.RIGHT, frog.getDirection());
 	}
-	
+
 	@Test
 	public void testHitBoxIntersects() {
 		HitBox a = new HitBox(0, 0, 50, 50);
 		HitBox b = new HitBox(25, 25, 50, 50);
 		assertTrue(a.intersects(b));
 	}
-	
+
 	@Test
 	public void testHitBoxNoIntersect() {
 		HitBox a = new HitBox(0, 0, 50, 50);
 		HitBox b = new HitBox(100, 100, 50, 50);
 		assertFalse(a.intersects(b));
 	}
-	
+
 	@Test
 	public void testHitBoxAdjacentNoIntersect() {
 		HitBox a = new HitBox(0, 0, 50, 50);
 		HitBox b = new HitBox(50, 0, 50, 50);
 		assertFalse(a.intersects(b));
 	}
-	
+
 	@Test
 	public void testLoseLife() {
 		int initialLives = frog.getLives();
 		frog.loseLife();
-		assertEquals(initialLives -1, frog.getLives());
+		assertEquals(initialLives - 1, frog.getLives());
 	}
-	
+
 	@Test
 	public void testIsDead() {
 		frog.loseLife();
 		frog.loseLife();
 		assertTrue(frog.isDead());
 	}
-	
-	@Test 
+
+	@Test
 	public void testResetLives() {
 		frog.loseLife();
 		frog.resetLives();
 		assertEquals(Frog.DEFAULT_LIVES, frog.getLives());
 	}
-	
+
 	@Test
 	public void testInWaterArea() {
-		//riverTop = 40, riverBottom = 290, center della rana = y + 25
-		Frog waterFrog = new Frog("W", Direction.UP,  new Size(50, 50), new Position(100, 140), map, 2);
-		//center = 165 -> dentro [40, 290]
+		// riverTop = 40, riverBottom = 290, center della rana = y + 25
+		Frog waterFrog = new Frog("W", Direction.UP, new Size(50, 50), new Position(100, 140), map, 2);
+		// center = 165 -> dentro [40, 290]
 		assertTrue(waterFrog.isInWaterArea());
 	}
-	
+
 	@Test
 	public void testNotInWaterArea() {
-		Frog landFrog = new Frog("L", Direction.UP,  new Size(50, 50), new Position(100, 500), map, 2);
-		//center = 525 -> fuori [40, 290]
+		Frog landFrog = new Frog("L", Direction.UP, new Size(50, 50), new Position(100, 500), map, 2);
+		// center = 525 -> fuori [40, 290]
 		assertFalse(landFrog.isInWaterArea());
 	}
-	
+
 	@Test
 	public void testMovingObjectMovesRight() {
 		MovingObject obj = new MovingObject(100, 500, MovingObjectType.CAR, map, 0);
@@ -112,7 +112,7 @@ public class JUnitTests {
 		obj.updatePosition();
 		assertTrue(obj.getPosition().getX() > initialX);
 	}
-	
+
 	@Test
 	public void testMovingObjectMovesLeft() {
 		MovingObject obj = new MovingObject(100, 390, MovingObjectType.TRUCK, map, 0);
@@ -121,7 +121,7 @@ public class JUnitTests {
 		obj.updatePosition();
 		assertTrue(obj.getPosition().getX() < initialX);
 	}
-	
+
 	@Test
 	public void testCheckMovingObjectCollisionWithCar() {
 		Game game = new Game(map);
@@ -132,7 +132,7 @@ public class JUnitTests {
 		game.addMovingObject(car);
 		assertTrue(game.checkMovingObjectCollision());
 	}
-	
+
 	@Test
 	public void testCheckMovingObjectNoCollision() {
 		Game game = new Game(map);
@@ -143,19 +143,19 @@ public class JUnitTests {
 		game.addMovingObject(car);
 		assertFalse(game.checkMovingObjectCollision());
 	}
-	
+
 	@Test
 	public void testEarnLifeHitBoxCreated() {
-		EarnLife el = new EarnLife(100,200);
+		EarnLife el = new EarnLife(100, 200);
 		assertNotNull(el.getHitBox());
 		assertEquals(100, el.getX());
 		assertEquals(200, el.getY());
 	}
-	
+
 	@Test
 	public void testCheckHeartCollision() {
 		Game game = new Game(map);
-		Frog f = new Frog("T", Direction.UP, new Size(50,50), new Position(615,565), map, 2);
+		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
 		f.loseLife(); // 1 vita rimasta
 		game.setFrog(f);
 		// Forza spawn del cuore nella stessa posizione della rana
@@ -163,5 +163,31 @@ public class JUnitTests {
 		// Verifica che dopo la collisione le vite si resettino
 		assertEquals(1, f.getLives());
 	}
+
+	@Test
+	public void testGameOverOnLivesZero() {
+		Game game = new Game(map);
+		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
+		game.setFrog(f);
+		f.loseLife();
+		f.loseLife();
+		assertTrue(game.checkGameOver());
+	}
+
+	@Test
+	public void testGameNotOverWithLives() {
+		Game game = new Game(map);
+		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
+		game.setFrog(f);
+		assertFalse(game.checkGameOver());
+	}
 	
+	@Test
+	public void testGameOverOnWin() {
+		Game game = new Game(map);
+		//rana arriva a y = 0 (vittoria)
+		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 0), map, 2);
+		game.setFrog(f);
+		assertTrue(game.checkGameOver());
+	}
 }
