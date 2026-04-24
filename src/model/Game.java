@@ -6,9 +6,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class Game {
-	public static final int EARN_LIFE_SPAWN_INTERVAL = 15; 
-	public static final int[] OBJECT_OFFSETS = {0, 300, 600, 900,1200};
-    public static final int SPAWN_OFFSET = 50;
+	//Costanti di gioco
+	public static final int EARN_LIFE_SPAWN_INTERVAL = 15; //Secondi tra spawn cuori
+	public static final int[] OBJECT_OFFSETS = {0, 300, 600, 900, 1200}; //Posizioni spawn oggetti
+    public static final int SPAWN_OFFSET = 50; // Offset extra spawn
 
 	private Map map;
 	private Frog frog;
@@ -16,14 +17,15 @@ public class Game {
 	private ArrayList<MovingObject> movingObjects;
 	private Random rnd;
 	
-    private boolean objectsSpawned;
-	private boolean isEarnLifeSpawned;
-	private int earnLifeSpawnCycles;
-	private String death; //morte formato stringa
+    private boolean objectsSpawned; //Flag oggetti già spawnati
+    private boolean isEarnLifeSpawned; //Flag cuore spawnato
+    private int earnLifeSpawnCycles; //Contatore spawn cuori
+    private String death; //'Morte' formatto stringa
 	
 	private LocalDateTime startTime;
-	private LocalDateTime lastEarnLifeSpawnTime; 
+	private LocalDateTime lastEarnLifeSpawnTime; //Ultimo spawn cuore
 	
+    // Contatori per alternare corsie
 	private int carLaneCount, truckLaneCount, turtleLaneCount, trunkLaneCount;
 	
 	public Game(Map map) {
@@ -36,7 +38,8 @@ public class Game {
 		this.death = "";
 		this.lastEarnLifeSpawnTime = LocalDateTime.now();
 	}
-
+	
+	//Getter e setter
 	public Map getMap() {
 		return map;
 	}
@@ -77,6 +80,7 @@ public class Game {
 		return earnLifeSpawnCycles;
 	}
 
+	//Movimenti rana con correzione posizione
 	public void moveFrogUp() {
 		frog.moveUp();
 	    frog.correctPosition();
@@ -97,6 +101,7 @@ public class Game {
 	    frog.correctPosition();
 	}
 
+	//Gestione oggetti dinamici
     public void addMovingObject(MovingObject obj) {
         movingObjects.add(obj);
     }
@@ -111,9 +116,10 @@ public class Game {
         }
     }
 
+    //Spawn iniziale degli oggetti (1 sola volta)
     public void spawnMovingObject() {
         if (!objectsSpawned) {
-            // Spawna 5 oggetti per ogni tipo (3 per corsia)
+            // Spawna 5 oggetti per ogni tipo 
             for (int i = 0; i < 5; i++) {
                 spawnMovingObjectByType(MovingObjectType.CAR, OBJECT_OFFSETS[i]);
                 spawnMovingObjectByType(MovingObjectType.TRUCK, OBJECT_OFFSETS[i]);
@@ -124,38 +130,37 @@ public class Game {
         }
     }
     
+    //Spawn oggetto per tipo
     private void spawnMovingObjectByType(MovingObjectType type, int offset) {
         int x, y;
         Direction direction;
         
         switch (type) {
+        //Strada
         case CAR:
-            // STRADA: corsie basse
-            y = (carLaneCount == 0) ? 500 : 440;
-            carLaneCount = (carLaneCount + 1) % 2;
+            y = (carLaneCount == 0) ? 500 : 440; //Corsie auto
+            carLaneCount = (carLaneCount + 1) % 2; //Alterna corsie
             direction = Direction.RIGHT;
             x =  offset;
             break;
             
         case TRUCK:
-            // STRADA: corsie alte (ma SOTTO la zona safe!)
-            y = (truckLaneCount == 0) ? 390 : 340;
+            y = (truckLaneCount == 0) ? 390 : 340; //Corsie camion 
             truckLaneCount = (truckLaneCount + 1) % 2;
             direction = Direction.LEFT;
             x =  + SPAWN_OFFSET + offset;
             break;
             
+        //Fiume    
         case TURTLE:
-            // FIUME: corsie medie
-            y = (turtleLaneCount == 0) ? 105 : 225;
+            y = (turtleLaneCount == 0) ? 105 : 225; //Corsie tartarughe
             turtleLaneCount = (turtleLaneCount + 1) % 2;
             direction = Direction.RIGHT;
             x = offset;
             break;
             
         case TRUNK:
-            // FIUME: corsie estreme (LONTANO dal confine 230!)
-            y = (trunkLaneCount == 0) ? 55 : 165;  //
+            y = (trunkLaneCount == 0) ? 55 : 165;  //Corsie tronchi
             trunkLaneCount = (trunkLaneCount + 1) % 2;
             direction = Direction.LEFT;
             x =  + SPAWN_OFFSET + offset;
@@ -170,18 +175,18 @@ public class Game {
         movingObjects.add(obj);    
     }
 
-	// Metodo per la logica della collisione tra Frog e MovingObject
+	//Gestione collisioni tra Frog e MovingObject
     private void movingObjectCollision(MovingObject obj) {
         switch (obj.getMovingObjectType()) {
         case CAR:
         case TRUCK:
             if (this.frog.getLives() > 1) {
-                // Hai più di 1 vita: perdi una vita e resetti
+                //Se hai più di 1 vita: perdi una vita e resetti posizione
                 this.frog.loseLife();
                 this.frog.resetToInitialPosition();
-                this.death = ""; // Continui a giocare
+                this.death = ""; //Continui a giocare
             } else {
-                // Hai solo 1 vita: muori
+                //Se hai solo 1 vita: muori
                 this.frog.loseLife();
                 this.frog.resetToInitialPosition();
                 this.death = "Hit by " + obj.getMovingObjectType().name().toLowerCase() + " - " + formatMatchTime();
@@ -195,7 +200,7 @@ public class Game {
         }
     }
 
-	// Metodo per la verifica della collisione con gli oggetti
+	//Verifica collisione con gli oggetti
     public boolean checkMovingObjectCollision() {
         if (frog == null) 
         	return false;
@@ -246,7 +251,7 @@ public class Game {
         }
     }
     
-    // Metodo per essere trasportato da un oggetto (tronchi/tartarughe)
+    //Trasporto rana tramite un oggetto (tronchi/tartarughe)
     public void onWaterObject(MovingObject waterObj) {
     	
         if (waterObj.getDirection() == Direction.RIGHT) {
@@ -263,6 +268,7 @@ public class Game {
 	    this.lastEarnLifeSpawnTime = time;
 	}
 	
+	//Spawn cuore ogni EARN_LIFE_SPAWN_INTERVAL secondi
     public void earnLifeSpawn() {
 	    LocalDateTime now = LocalDateTime.now();
 	    long secondsSinceLastSpawn = this.lastEarnLifeSpawnTime.until(now, ChronoUnit.SECONDS);
@@ -278,22 +284,21 @@ public class Game {
 	    }
 	}
     
-	// Metodo per la verifica della collisione con i cuori
+	//Verifica collisione con un cuore (vita rigenerata)
 	public boolean checkHeartCollision() {
 		 if (frog == null || earnLife == null || !isEarnLifeSpawned) 
 	            return false;
 	        
 	        if (frog.getHitBox().intersects(earnLife.getHitBox())) {
-	            frog.resetLives();
-	            isEarnLifeSpawned = false; // CAMPO MODIFICATO SOLO QUI PER FAR CHE IL CUORE SCOMPAIA QUANDO IL GIOCATORE LO RACCOGLIE
+	            frog.resetLives(); //Rigenera tutte le vite (2)
+	            isEarnLifeSpawned = false; //Cuore scompare
 	            earnLife = null;
 	            return true;
 	        }
 	        return false;
 	}
 	
-	//Calcola quanti secondi sono passati tra startTime e time
-	//Logica che restituisce la rappresentazione “clock-like” (modulo 60/24).
+	//Calcolo durata partita formato orologio (modulo 60/24).
 	private long getDurationSeconds(LocalDateTime time) {
 		return this.startTime.until(time, ChronoUnit.SECONDS)%60;
 	}
@@ -318,6 +323,7 @@ public class Game {
 		return this.getDurationHours(LocalDateTime.now());
 	}
 	
+	//Formattazione tempo partita come HH:MM:SS
 	private String formatMatchTime() {
 	    return String.format("%02d:%02d:%02d",
 	        getMatchDurationHours(),
@@ -326,6 +332,7 @@ public class Game {
 	    );
 	}
 	
+	//Verifica game over (vite <=0 o rana raggiunge obiettivo)
 	public boolean checkGameOver() {
 		if (frog == null) return false;
 		
@@ -338,14 +345,15 @@ public class Game {
 		return hasLost || hasWon;
 	}
 	
+	//Ciclo principale di aggiornamento del gioco
 	public void update() {
-		spawnMovingObject();
-	    updateMovingObjects();
-	    checkMovingObjectCollision();  // Prima controlla collisioni con auto/camion
-	    checkWaterCollision();          // POI controlla acqua e piattaforme
-	    earnLifeSpawn();
-	    checkHeartCollision();
-	    checkGameOver();
+		spawnMovingObject();          //Spawn iniziale oggetti
+        updateMovingObjects();        //Muove auto, camion, tronchi, tartarughe
+        checkMovingObjectCollision(); //Controlla collisioni con veicoli
+        checkWaterCollision();        //Controlla annegamento/trasporto acqua
+        earnLifeSpawn();              //Spawn cuore extra vita
+        checkHeartCollision();        //Controlla raccolta cuore
+        checkGameOver();              //Verifica fine partita
 	}
     
 }
