@@ -145,8 +145,8 @@ public class JUnitTests {
 	}
 
 	@Test
-	public void testEarnLifeHitBoxCreated() {
-		EarnLife el = new EarnLife(100, 200);
+	public void testHeartHitBoxCreated() {
+		Heart el = new Heart(100, 200);
 		assertNotNull(el.getHitBox());
 		assertEquals(100, el.getX());
 		assertEquals(200, el.getY());
@@ -159,7 +159,6 @@ public class JUnitTests {
 		f.loseLife(); // 1 vita rimasta
 		game.setFrog(f);
 		// Forza spawn del cuore nella stessa posizione della rana
-		// (usiamo reflections o esponiamo un setter per test)
 		// Verifica che dopo la collisione le vite si resettino
 		assertEquals(1, f.getLives());
 	}

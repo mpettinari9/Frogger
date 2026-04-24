@@ -200,10 +200,10 @@ public class GameController implements KeyListener, Runnable {
     }
     
     private void updateHeart() {
-        if (gameModel.isEarnLifeSpawned() && gameWindow.getGamePanel().getHeartSprite() == null) {
-            EarnLife heart = gameModel.getEarnLife();
+        if (gameModel.isHeartSpawned() && gameWindow.getGamePanel().getHeartSprite() == null) {
+            Heart heart = gameModel.getHeart();
             gameWindow.getGamePanel().addHeart(heart.getX(), heart.getY());
-        } else if (!gameModel.isEarnLifeSpawned() && gameWindow.getGamePanel().getHeartSprite() != null) {
+        } else if (!gameModel.isHeartSpawned() && gameWindow.getGamePanel().getHeartSprite() != null) {
             gameWindow.getGamePanel().removeHeart();
         }
     }

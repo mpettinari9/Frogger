@@ -1,7 +1,7 @@
 package model;
 
 
-public class EarnLife {
+public class Heart {
 	public static final int HEART_WIDTH = 60;
     public static final int HEART_HEIGHT = 60;
 	public static final int HEART_VALUE = 1;
@@ -9,12 +9,12 @@ public class EarnLife {
 	private final Position position;
 	private HitBox hitBox;
 	
-	public EarnLife(Position position) {
+	public Heart(Position position) {
 		this.position = position;	
 		this.hitBox = new HitBox(position.getX(), position.getY(), HEART_WIDTH, HEART_HEIGHT); 
 	}
 	
-	public EarnLife(int x, int y) {
+	public Heart(int x, int y) {
 		this(new Position(x,y));
 	}
 	

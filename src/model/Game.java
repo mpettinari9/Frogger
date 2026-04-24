@@ -7,23 +7,23 @@ import java.time.temporal.ChronoUnit;
 
 public class Game {
 	//Costanti di gioco
-	public static final int EARN_LIFE_SPAWN_INTERVAL = 15; //Secondi tra spawn cuori
+	public static final int HEART_SPAWN_INTERVAL = 15; //Secondi tra spawn cuori
 	public static final int[] OBJECT_OFFSETS = {0, 300, 600, 900, 1200}; //Posizioni spawn oggetti
     public static final int SPAWN_OFFSET = 50; // Offset extra spawn
 
 	private Map map;
 	private Frog frog;
-	private EarnLife earnLife;
+	private Heart heart;
 	private ArrayList<MovingObject> movingObjects;
 	private Random rnd;
 	
     private boolean objectsSpawned; //Flag oggetti già spawnati
-    private boolean isEarnLifeSpawned; //Flag cuore spawnato
-    private int earnLifeSpawnCycles; //Contatore spawn cuori
+    private boolean isHeartSpawned; //Flag cuore spawnato
+    private int heartSpawnCycles; //Contatore spawn cuori
     private String death; //'Morte' formatto stringa
 	
 	private LocalDateTime startTime;
-	private LocalDateTime lastEarnLifeSpawnTime; //Ultimo spawn cuore
+	private LocalDateTime lastHeartSpawnTime; //Ultimo spawn cuore
 	
     // Contatori per alternare corsie
 	private int carLaneCount, truckLaneCount, turtleLaneCount, trunkLaneCount;
@@ -33,10 +33,10 @@ public class Game {
 		this.map = map;
 		this.rnd = new Random();
 		this.movingObjects = new ArrayList<>();
-		this.isEarnLifeSpawned = false;
-		this.earnLifeSpawnCycles = 0;
+		this.isHeartSpawned = false;
+		this.heartSpawnCycles = 0;
 		this.death = "";
-		this.lastEarnLifeSpawnTime = LocalDateTime.now();
+		this.lastHeartSpawnTime = LocalDateTime.now();
 	}
 	
 	//Getter e setter
@@ -56,12 +56,12 @@ public class Game {
         return movingObjects;
     }
 
-	public EarnLife getEarnLife() {
-		return earnLife;
+	public Heart getHeart() {
+		return heart;
 	}
 
-	public boolean isEarnLifeSpawned() {
-		return isEarnLifeSpawned;
+	public boolean isHeartSpawned() {
+		return isHeartSpawned;
 	}
 	
 	public String getDeath() {
@@ -77,7 +77,7 @@ public class Game {
 	}
 
 	public int getEarnLifeSpawnCycles() {
-		return earnLifeSpawnCycles;
+		return heartSpawnCycles;
 	}
 
 	//Movimenti rana con correzione posizione
@@ -264,35 +264,35 @@ public class Game {
         frog.updateHitBox();
     }
     
-	public void setLastEarnLifeSpawnTime(LocalDateTime time) {
-	    this.lastEarnLifeSpawnTime = time;
+	public void setLastHeartSpawnTime(LocalDateTime time) {
+	    this.lastHeartSpawnTime = time;
 	}
 	
 	//Spawn cuore ogni EARN_LIFE_SPAWN_INTERVAL secondi
-    public void earnLifeSpawn() {
+    public void heartSpawn() {
 	    LocalDateTime now = LocalDateTime.now();
-	    long secondsSinceLastSpawn = this.lastEarnLifeSpawnTime.until(now, ChronoUnit.SECONDS);
+	    long secondsSinceLastSpawn = this.lastHeartSpawnTime.until(now, ChronoUnit.SECONDS);
 
-	    if (!this.isEarnLifeSpawned && secondsSinceLastSpawn >= EARN_LIFE_SPAWN_INTERVAL) {
-	    	int x = rnd.nextInt(0, map.getWidth() - EarnLife.getHeartWidth());
-	    	int y = rnd.nextInt(0, map.getHeight() - EarnLife.getHeartHeight());
+	    if (!this.isHeartSpawned && secondsSinceLastSpawn >= HEART_SPAWN_INTERVAL) {
+	    	int x = rnd.nextInt(0, map.getWidth() - Heart.getHeartWidth());
+	    	int y = rnd.nextInt(0, map.getHeight() - Heart.getHeartHeight());
 
-	        this.earnLife = new EarnLife(x, y);
-	        this.isEarnLifeSpawned = true;
-	        this.earnLifeSpawnCycles++;
-	        this.lastEarnLifeSpawnTime = now; // reset timer
+	        this.heart = new Heart(x, y);
+	        this.isHeartSpawned = true;
+	        this.heartSpawnCycles++;
+	        this.lastHeartSpawnTime = now; // reset timer
 	    }
 	}
     
 	//Verifica collisione con un cuore (vita rigenerata)
 	public boolean checkHeartCollision() {
-		 if (frog == null || earnLife == null || !isEarnLifeSpawned) 
+		 if (frog == null || heart == null || !isHeartSpawned) 
 	            return false;
 	        
-	        if (frog.getHitBox().intersects(earnLife.getHitBox())) {
+	        if (frog.getHitBox().intersects(heart.getHitBox())) {
 	            frog.resetLives(); //Rigenera tutte le vite (2)
-	            isEarnLifeSpawned = false; //Cuore scompare
-	            earnLife = null;
+	            isHeartSpawned = false; //Cuore scompare
+	            heart = null;
 	            return true;
 	        }
 	        return false;
@@ -351,7 +351,7 @@ public class Game {
         updateMovingObjects();        //Muove auto, camion, tronchi, tartarughe
         checkMovingObjectCollision(); //Controlla collisioni con veicoli
         checkWaterCollision();        //Controlla annegamento/trasporto acqua
-        earnLifeSpawn();              //Spawn cuore extra vita
+        heartSpawn();              //Spawn cuore extra vita
         checkHeartCollision();        //Controlla raccolta cuore
         checkGameOver();              //Verifica fine partita
 	}
