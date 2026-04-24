@@ -1,5 +1,7 @@
 package model;
 
+//Rappresenta una posizione bidimensionale (x, y) nello spazio di gioco.
+//Utilizzata per rana, oggetti mobili, cuori e hitbox.
 public class Position {
 	private int x;
 	private int y;
@@ -9,6 +11,7 @@ public class Position {
 		this.y = y;
 	}
 
+	//Getter e setter
 	public int getX() {
 		return x;
 	}
@@ -25,6 +28,7 @@ public class Position {
 		this.y = y;
 	}
 	
+	//Sposta la posizione di un dato offset
     public void move(double dx, double dy) {
     	this.x += dx;
     	this.y += dy;

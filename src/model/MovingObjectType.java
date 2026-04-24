@@ -1,5 +1,6 @@
 package model;
 
+//Tipi di oggetti mobili presenti nel gioco.
 public enum MovingObjectType {
 	CAR(55, 45),
 	TRUCK(107, 45),
@@ -14,6 +15,7 @@ public enum MovingObjectType {
         this.height = height;
     }
 
+    //Getter
     public int getWidth() {
     	return width; 
     }

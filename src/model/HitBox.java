@@ -1,5 +1,7 @@
 package model;
 
+//Riquadro di collisione rettangolare allineato agli assi (AABB).
+//Utilizzato per rilevare intersezioni tra rana, oggetti mobili e cuori.
 public class HitBox {
 	private int x;
 	private int y;
@@ -13,14 +15,18 @@ public class HitBox {
 		this.height = height;
 	}
 	
-	//formula standard AABB (Axis-Aligned Bounding Box)
+	//Verifica se questa hitbox si interseca con un'altra
     public boolean intersects(HitBox other) {
-        return this.x < other.x + other.width &&  //Controlla che il lato sinistro di A (rana) sia a sinistra del lato destro di B (movingObject).
-               this.x + this.width > other.x &&   //Controlla che il lato destro di A sia a destra del lato sinistro di B.
-               this.y < other.y + other.height && //Controlla che il lato superiore di A sia sopra il lato inferiore di B.
-               this.y + this.height > other.y;    //Controlla che il lato inferiore di A sia sotto il lato superiore di B.
+        //Controlla se il lato sinistro di this è a sinistra del lato destro di other
+        //e se il lato destro di this è a destra del lato sinistro di other,
+        //analogamente per l'asse Y.
+        return this.x < other.x + other.width &&  
+               this.x + this.width > other.x &&  
+               this.y < other.y + other.height && 
+               this.y + this.height > other.y;    
     }
     
+    //Getter e setter
     public int getX() {
 		return x;
 	}

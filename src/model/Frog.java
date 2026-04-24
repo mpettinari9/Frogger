@@ -1,8 +1,11 @@
 package model;
 
+//Rappresenta la rana controllata dal giocatore.
+//Gestisce movimento, vite, collisioni e posizionamento nella mappa.
 public class Frog {
-	public static final int DEFAULT_LIVES = 2;
-	public static final double MOVE_STEP = 2;
+	//Costanti di gioco
+	public static final int DEFAULT_LIVES = 2; //Vite iniziali
+	public static final double MOVE_STEP = 2; //Passo di movimento in pixel
 	
 	private String name;
 	private Direction direction;
@@ -17,6 +20,7 @@ public class Frog {
 	private Position initialPosition;
 	private Direction initialDirection;
 	
+	//Costruttore principale
 	public Frog(String name, Direction direction, Size size, Position position, Map map, int lives) {
 		this.name = name;
 		this.direction = direction;
@@ -32,10 +36,12 @@ public class Frog {
 		this.initialDirection = direction;
 	}
 
+	//Costruttore con coordinate esplicite
 	public Frog(String name, Direction direction, Size size, int x, int y, Map map, int lives) {
 		this(name, direction, size, new Position(x, y), map, lives);
 	}
 	
+	//Getter e setter
 	public String getName() {
 		return name;
 	}
@@ -104,6 +110,7 @@ public class Frog {
 		this.position.setY(y);
 	}
 	
+	//Movimenti rana e aggiornamento hitBox
     public void moveUp() {
         this.position.move(0, -MOVE_STEP);
         this.direction = Direction.UP;
@@ -128,6 +135,7 @@ public class Frog {
         updateHitBox();
     }
     
+    //Aggiornamento hitBox in base a posizione e dimensioni correnti
     public void updateHitBox() {
         this.hitBox.setX(this.position.getX());
         this.hitBox.setY(this.position.getY()); 
@@ -135,18 +143,22 @@ public class Frog {
         this.hitBox.setHeight(this.size.getHeight()); 
      }
     
+    //Perde 1 vita
     public void loseLife() {
     	this.lives--;
     }
     
+    //Resetta vite al valore predefinito
     public void resetLives() {
     	this.lives = DEFAULT_LIVES;
     }
     
+    //Verifica se la rana è morta
     public boolean isDead() {
     	return this.lives <= 0;
     }
     
+    //Verifica se il centro della rana è fuori dallo schermo
     public boolean isOutOfBounds() {
         int centerX = position.getX() + size.getWidth() / 2;
         int centerY = position.getY() + size.getHeight() / 2;
@@ -157,6 +169,7 @@ public class Frog {
                centerY > this.screenHeight;
     }
 
+    //Corregge poszione se rana esce dai limiti dello schermo
     public void correctPosition() {
         int centerX = position.getX() + size.getWidth() / 2;
         int centerY = position.getY() + size.getHeight() / 2;
@@ -176,11 +189,12 @@ public class Frog {
         updateHitBox();
     }
     
+    //Verifica se la rana è nell'area del fiume
     public boolean isInWaterArea() {
     	int centerY = this.position.getY() + this.size.getHeight() / 2;
         return centerY >= map.getRiverTop() && centerY <= map.getRiverBottom();   }
     
-    // Metodo per resettare la posizione iniziale
+    //Resetta la posizione e direzione iniziali
     public void resetToInitialPosition() {
         this.position.setX(initialPosition.getX());
         this.position.setY(initialPosition.getY()); 
@@ -188,10 +202,12 @@ public class Frog {
         updateHitBox();
     }
     
+    //Restituisce la coordinata X del centro della rana
     public int getCenterX() {
         return this.position.getX() + this.size.getWidth() / 2;
     }
 
+    //Restituisce la coordinata Y del centro della rana
     public int getCenterY() {
         return this.position.getY() + this.size.getHeight() / 2;
     }
