@@ -2,6 +2,10 @@ package view;
 
 import javax.swing.*;
 
+/*
+ * Classe base per tutti gli sprite del gioco.
+ * Gestisce le animazioni nelle quattro direzioni e lo stato di movimento.
+ */
 public class Sprite extends JLabel{
 	public static final int DELAY = 5; /* tempo di azione del frame in step logici / ms */
 	
@@ -12,6 +16,7 @@ public class Sprite extends JLabel{
 	private SpriteDirection direction; 	/* direzione dello sprite */
 	private boolean moving; 			/* movimento dello sprite */
 	
+	// Inizializza lo sprite con l'immagine base e gli array di animazione.
 	protected Sprite(String baseImagePath, int numberOfFrames) {
 		super(new ImageIcon(baseImagePath));
 		this.upAnimations = new ImageIcon[numberOfFrames];
@@ -22,6 +27,7 @@ public class Sprite extends JLabel{
 		this.moving = false;
 	}
 
+	// Metodi getter e setter
 	protected ImageIcon[] getUpAnimations() {
 		return this.upAnimations;
 	}

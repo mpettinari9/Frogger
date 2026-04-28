@@ -4,7 +4,10 @@ import javax.swing.JFrame;
 
 import model.Frog;
 
-
+/*
+ * Finestra principale del gioco.
+ * Gestisce la navigazione tra i pannelli: titolo, gioco, risultati e tutorial.
+ */
 public class GameWindow extends JFrame{
 	private TitlePanel titlePanel; /* Title Screen */
 	private GamePanel gamePanel; /* Schermata di gioco */
@@ -40,12 +43,15 @@ public class GameWindow extends JFrame{
 	        this.setVisible(true);
 
 	}
+	
+	//  Mostra il pannello del titolo.
 	public void showTitle() {
 	    this.getContentPane().removeAll();
 	    this.add(titlePanel);
 	    this.refreshPanel();
 	}
 
+	// Mostra il pannello di gioco e richiede il focus per i tasti.
 	public void showGame() {
 	    this.getContentPane().removeAll();
 	    this.add(gamePanel);
@@ -56,24 +62,27 @@ public class GameWindow extends JFrame{
 	    }
 	}
 
+	// Mostra il pannello dei risultati.
 	public void showResults() {
 	    this.getContentPane().removeAll();
 	    this.add(resultPanel);
 	    this.refreshPanel();
 	}
 	
+	// Mostra il pannello del tutorial.
 	public void showTutorial() {
         this.getContentPane().removeAll();
         this.add(tutorialPanel);
         this.refreshPanel();
     }
 	
+	//  Aggiorna la finestra rivalidando e ridisegnando il contenuto.
 	public void refreshPanel() {
     	this.revalidate();
         this.repaint();
     }
 	
-	/* metodi getter della classe "GameWindow" */
+	// metodi getter e setter
 	public TitlePanel getTitlePanel() {
 		return this.titlePanel;
 	}

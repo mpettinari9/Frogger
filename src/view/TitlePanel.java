@@ -3,6 +3,10 @@ package view;
 import java.awt.*;
 import javax.swing.*;
 
+/*
+ * Pannello della schermata iniziale.
+ * Permette al giocatore di inserire il proprio nome e avviare la partita.
+ */
 public class TitlePanel extends JPanel {
 	private JButton startButton;
 	private JButton tutorialButton;
@@ -41,6 +45,7 @@ public class TitlePanel extends JPanel {
 		this.add(this.startButton);
 	}
 	
+	// Metodi getter e setter
 	public JButton getStartButton(){
 		return startButton;
 	}

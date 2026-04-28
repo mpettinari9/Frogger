@@ -2,9 +2,14 @@ package view;
 
 import javax.swing.ImageIcon;
 
+/*
+ * Sprite animato della rana.
+ * Gestisce le animazioni di movimento nelle quattro direzioni.
+ */
 public class FrogSprite extends Sprite {
 	 private int walkFrame;
-
+	 
+	 // Carica le immagini di animazione per le quattro direzioni. 
 	 public FrogSprite(String[] walkUpPaths, String[] walkDownPaths, String[] walkLeftPaths, String[] walkRightPaths) {
 
 		 super(walkDownPaths[0], walkDownPaths.length); 
@@ -28,6 +33,7 @@ public class FrogSprite extends Sprite {
 		this.setMoving(moving);
 	}
 
+	// Seleziona e mostra il frame corretto in base alla direzione e al frame corrente. 
     private int performSprite(SpriteDirection direction, int frame) {
         ImageIcon[] animation;
         switch (direction) {
@@ -43,6 +49,7 @@ public class FrogSprite extends Sprite {
         return totFrames;
     }
 
+    // Avanza l'animazione se la rana si sta muovendo, altrimenti mostra il frame statico.
     public void performAnimation() {
         if (super.isMoving()) {
             // avanza l’animazione

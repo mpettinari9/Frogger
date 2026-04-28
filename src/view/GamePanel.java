@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/*
+ * Pannello principale di gioco.
+ * Contiene l'area di gioco (gamePanel) e la barra informazioni (infoPanel)
+ * con vite, nome giocatore e tempo di partita.
+ */
 public class GamePanel extends JPanel {
     private JPanel gamePanel;
     private JPanel infoPanel;
@@ -12,7 +17,8 @@ public class GamePanel extends JPanel {
     private HeartSprite heartSprite;
     private JProgressBar livesBar;
     private JLabel timeLabel;
-
+    
+    // Inizializza il pannello di gioco con l'area di gioco e la barra info.
     public GamePanel(int screenWidth, int screenHeight, String frogName, int frogLifeValue, int frogLifeMaxValue) {
         this.setSize(screenWidth, screenHeight);
         this.setLayout(null);
@@ -66,7 +72,7 @@ public class GamePanel extends JPanel {
         this.add(this.infoPanel);
     }
     
-
+    // metodi getter e setter
     public JPanel getGamePanel() {
         return gamePanel;
     }
@@ -87,7 +93,8 @@ public class GamePanel extends JPanel {
     public ArrayList<MovingObjectSprite> getMovingObjectSprites() { 
         return movingObjectSprites; 
     }
-
+    
+    // Crea e posiziona lo sprite della rana nella posizione iniziale. 
     public void setFrogSprite(int x, int y) {
         if (this.frogSprite == null) {
             String[] walkUp = {"src/view/Asset/frogup1.png", "src/view/Asset/frogup2.png"};
@@ -102,6 +109,7 @@ public class GamePanel extends JPanel {
         }
     }
     
+    // Aggiorna la posizione della rana, le vite, il tempo e gli oggetti mobili.
     public void updateGameWindow(int frogX, int frogY, SpriteDirection frogDirection, 
             					 int frogLife, int frogMaxLife,
             					 ArrayList<Integer> movingX, ArrayList<Integer> movingY, 
@@ -128,18 +136,18 @@ public class GamePanel extends JPanel {
 		gamePanel.repaint();
     }
     
-    // Aggiunge oggetto usando coordinate dall'angolo
+    // Aggiunge uno sprite di un oggetto mobile al pannello di gioco.
     public void addMovingObject(MovingObjectTypeSprite type, int x, int y) {
         MovingObjectSprite obj = new MovingObjectSprite(
             "src/view/Asset/" + type.toString().toLowerCase() + ".png"
         );
-        // x e y sono già dall'angolo
+       
         obj.setBounds(x, y, obj.getIcon().getIconWidth(), obj.getIcon().getIconHeight());
         movingObjectSprites.add(obj);
         gamePanel.add(obj);
     }
     
-    // Aggiunge cuore usando coordinate dall'angolo
+    // Aggiunge lo sprite del cuore al pannello di gioco.
     public void addHeart(int x, int y) {
         if (heartSprite == null) {
             heartSprite = new HeartSprite("src/view/Asset/heart.png");
@@ -150,6 +158,7 @@ public class GamePanel extends JPanel {
         }
     }
 
+    // Rimuove lo sprite del cuore dal pannello di gioco.
     public void removeHeart() {
         if (heartSprite != null) {
             gamePanel.remove(heartSprite);

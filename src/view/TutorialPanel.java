@@ -3,6 +3,10 @@ package view;
 import java.awt.*;
 import javax.swing.*;
 
+/*
+ * Pannello del tutorial che mostra le istruzioni di gioco.
+ * Contiene il pulsante per tornare alla schermata iniziale.
+ */
 public class TutorialPanel extends JPanel {
     private JButton backButton;
     private ImageIcon tutorialImage;

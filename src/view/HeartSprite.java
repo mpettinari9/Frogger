@@ -3,6 +3,10 @@ package view;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+/*
+ * Sprite del cuore che appare durante la partita.
+ * Se raccolto dalla rana, ripristina le vite al massimo.
+ */
 public class HeartSprite extends JLabel{
 	
 	private boolean gainedLife;
@@ -17,6 +21,7 @@ public class HeartSprite extends JLabel{
         this.setVisible(true);
     }
 
+    // Nasconde il cuore e segna la vita come guadagnata.
     public void gainLife() {
         this.gainedLife = true;
         this.setVisible(false);

@@ -3,6 +3,10 @@ package view;
 import java.awt.*;
 import javax.swing.*;
 
+/*
+ * Pannello dei risultati mostrato a fine partita.
+ * Mostra il risultato della partita e il pulsante per ricominciare.
+ */
 public class ResultPanel extends JPanel {
 	private JLabel title;
 	private JLabel frogResultText;
@@ -35,10 +39,12 @@ public class ResultPanel extends JPanel {
 		this.add(this.toTitlePanelButton);
 	}
 	
+	// Imposta il testo del titolo (es. "HAI VINTO" o "HAI PERSO").
 	public void setTitle(String titleText) {
 	    this.title.setText(titleText);
 	}
 
+	// Imposta il testo con il risultato della partita (nome e tempo).
 	public void setFrogResultText(String text) {
 		this.frogResultText.setText(text);	}
 	
