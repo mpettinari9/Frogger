@@ -19,6 +19,9 @@ public class Frog {
 	private HitBox hitBox;
 	private Position initialPosition;
 	private Direction initialDirection;
+	private int xMin = 0;        // Limite sinistro per la rana (split-screen)
+	private int xMax = -1;       // Limite destro per la rana (-1 = usa screenWidth)
+	
 	
 	//Costruttore principale
 	public Frog(String name, Direction direction, Size size, Position position, Map map, int lives) {
@@ -211,5 +214,15 @@ public class Frog {
     public int getCenterY() {
         return this.position.getY() + this.size.getHeight() / 2;
     }
+    
+    // Limite sinistro (in X, non al centro) oltre il quale la rana non può muoversi
+    public int getMinX() {
+        return xMin - size.getWidth() / 2;
+    }
 
+    // Limite destro (in X, non al centro) oltre il quale la rana non può muoversi
+    public int getMaxX() {
+        int effectiveXMax = (xMax > 0) ? xMax : this.screenWidth;
+        return effectiveXMax - size.getWidth() / 2;
+    }
 }
