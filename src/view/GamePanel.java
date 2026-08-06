@@ -27,7 +27,7 @@ public class GamePanel extends JPanel {
 	        @Override
 	        protected void paintComponent(Graphics g) {
 	            super.paintComponent(g);
-	            g.drawImage(new ImageIcon("src/view/Asset/sfondogioco1.png").getImage(),
+	            g.drawImage(new ImageIcon("src/view/Asset/sfondoRana.png").getImage(),
 	                        0, 0, this.getWidth(), this.getHeight(), this);
 	        }
 	    };

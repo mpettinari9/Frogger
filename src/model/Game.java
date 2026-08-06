@@ -138,14 +138,14 @@ public class Game {
         switch (type) {
         //Strada
         case CAR:
-            y = (carLaneCount == 0) ? 500 : 440; //Corsie auto
+            y = (carLaneCount == 0) ? 510 : 445; //Corsie auto
             carLaneCount = (carLaneCount + 1) % 2; //Alterna corsie
             direction = Direction.RIGHT;
             x =  offset;
             break;
             
         case TRUCK:
-            y = (truckLaneCount == 0) ? 390 : 340; //Corsie camion 
+            y = (truckLaneCount == 0) ? 395 : 345; //Corsie camion 
             truckLaneCount = (truckLaneCount + 1) % 2;
             direction = Direction.LEFT;
             x =  + SPAWN_OFFSET + offset;
@@ -153,14 +153,14 @@ public class Game {
             
         //Fiume    
         case TURTLE:
-            y = (turtleLaneCount == 0) ? 105 : 225; //Corsie tartarughe
+            y = (turtleLaneCount == 0) ? 125 : 245; //Corsie tartarughe
             turtleLaneCount = (turtleLaneCount + 1) % 2;
             direction = Direction.RIGHT;
             x = offset;
             break;
             
         case TRUNK:
-            y = (trunkLaneCount == 0) ? 55 : 165;  //Corsie tronchi
+            y = (trunkLaneCount == 0) ? 75 : 185;  //Corsie tronchi
             trunkLaneCount = (trunkLaneCount + 1) % 2;
             direction = Direction.LEFT;
             x =  + SPAWN_OFFSET + offset;
