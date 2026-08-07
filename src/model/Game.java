@@ -355,5 +355,10 @@ public class Game {
         checkHeartCollision();        //Controlla raccolta cuore
         checkGameOver();              //Verifica fine partita
 	}
+
+	public void addScore(Frog frog2, int bonusPoints) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }
