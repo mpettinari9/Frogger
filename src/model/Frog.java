@@ -171,17 +171,35 @@ public class Frog {
                centerY < 0 || 
                centerY > this.screenHeight;
     }
+    
+    // Imposta i confini orizzontali entro cui la rana può muoversi (per split-screen)
+    public void setXBounds(int min, int max) {
+        this.xMin = min;
+        this.xMax = max;
+    }
+
+    // Limite sinistro (in X, non al centro) oltre il quale la rana non può muoversi
+    public int getMinX() {
+        return xMin - size.getWidth() / 2;
+    }
+
+    // Limite destro (in X, non al centro) oltre il quale la rana non può muoversi
+    public int getMaxX() {
+        int effectiveXMax = (xMax > 0) ? xMax : this.screenWidth;
+        return effectiveXMax - size.getWidth() / 2;
+    }
 
     //Corregge poszione se rana esce dai limiti dello schermo
     public void correctPosition() {
         int centerX = position.getX() + size.getWidth() / 2;
         int centerY = position.getY() + size.getHeight() / 2;
+        int effectiveXMax = (xMax > 0) ? xMax : this.screenWidth;
         
-        if (centerX < 0) {
-            position.setX(-size.getWidth() / 2);
+        if (centerX < xMin) {
+            position.setX(xMin - size.getWidth() / 2);
         }
-        if (centerX > this.screenWidth) {
-            position.setX(this.screenWidth - size.getWidth() / 2);
+        if (centerX > effectiveXMax) {
+            position.setX(effectiveXMax - size.getWidth() / 2);
         }
         if (centerY < 0) {
             position.setY(-size.getHeight() / 2);
@@ -215,14 +233,4 @@ public class Frog {
         return this.position.getY() + this.size.getHeight() / 2;
     }
     
-    // Limite sinistro (in X, non al centro) oltre il quale la rana non può muoversi
-    public int getMinX() {
-        return xMin - size.getWidth() / 2;
-    }
-
-    // Limite destro (in X, non al centro) oltre il quale la rana non può muoversi
-    public int getMaxX() {
-        int effectiveXMax = (xMax > 0) ? xMax : this.screenWidth;
-        return effectiveXMax - size.getWidth() / 2;
-    }
 }
