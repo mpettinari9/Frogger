@@ -14,6 +14,10 @@ public class MovingObject {
     private final Size size;
     private HitBox hitBox;  
     private final int screenWidth;
+    // Confini della sezione per lo split-screen (default: intera larghezza)
+    private int sectionLeft = 0;
+    private int sectionRight = -1; // -1 = usa screenWidth
+    
     
     //Costruttore con oggetto Position
     public MovingObject(Position position, MovingObjectType type, Map map, int spawnOffset) {
@@ -55,6 +59,12 @@ public class MovingObject {
     	return direction;
     }
     
+    // Imposta i confini orizzontali entro cui l'oggetto può muoversi (per split-screen)
+    public void setSectionBounds(int left, int right) {
+        this.sectionLeft = left;
+        this.sectionRight = right;
+    }
+    
     public void setDirection(Direction direction) {
     	this.direction = direction;
     }
@@ -86,21 +96,24 @@ public class MovingObject {
         }
     }
 
-    //Verifica se l'oggetto è completamente uscito dallo schermo
+    //Verifica se l'oggetto è completamente uscito dalla propria sezione
     private boolean isOutOfBounds() {
+        int right = (sectionRight > 0) ? sectionRight : screenWidth;
         if (direction == Direction.RIGHT) {
-            return position.getX() > screenWidth;
+            return position.getX() > right;
         } else {
-            return position.getX() + size.getWidth() < 0;
+            return position.getX() + size.getWidth() < sectionLeft;
         }
     }
     
-    //Riposiziona l'oggetto all'inizio del percorso (ciclo continuo)
+    
+    //Riposiziona l'oggetto all'inizio del percorso nella propria sezione (ciclo continuo)
     private void resetPositionAtStart() {
+        int right = (sectionRight > 0) ? sectionRight : screenWidth;
         if (direction == Direction.RIGHT) {
-            position.setX(START_X_LEFT );
+            position.setX(sectionLeft - size.getWidth() - 10);
         } else {
-            position.setX(START_X_RIGHT);
+            position.setX(right + 10);
         }
         updateHitBox();
     }
