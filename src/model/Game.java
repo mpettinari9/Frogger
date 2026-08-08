@@ -11,6 +11,10 @@ public class Game {
 	public static final int[] OBJECT_OFFSETS = {0, 300, 600, 900, 1200}; //Posizioni spawn oggetti
     public static final int SPAWN_OFFSET = 50; // Offset extra spawn
 
+    public static final int INSECT_SPAWN_INTERVAL = 15;  // Secondi tra spawn insetti
+    public static final int SLOT_POINTS = 100; // Punti per ogni tana occupata
+    public static final int NUM_SLOTS = 5;     // Tane da occupare per vincere (per ciascun giocatore)
+
 	private Map map;
 	private Frog frog;
 	private Heart heart;
