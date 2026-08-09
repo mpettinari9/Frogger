@@ -118,4 +118,49 @@ public class Game {
 	    public int getScore(int index) { return scores[index]; }
 	    public int[] getScores() { return scores; }
 
+	    // Aggiunge punti al punteggio del giocatore all'indice "frogIndex" (chiamato da Collectible.onCollect)
+	    public void addScore(int frogIndex, int points) { this.scores[frogIndex] += points; }
+
+	    // Overload comodo per i Collectible (Heart, Insect), che conoscono solo
+	    // l'oggetto Frog che ha raccolto, non il suo indice. Effettua la lookup internamente.
+	    public void addScore(Frog frog, int points) {
+	        int index = indexOfFrog(frog);
+	        if (index >= 0) {
+	            this.scores[index] += points;
+	        }
+	    }
+	    
+	 // Trova l'indice della rana passata come parametro nell'array frogs.
+	    // Usato per instradare il punteggio al giocatore giusto quando un Collectible
+	    // (che riceve solo l'oggetto Frog, non l'indice) viene raccolto.
+	    private int indexOfFrog(Frog frog) {
+	        for (int i = 0; i < frogs.length; i++) {
+	            if (frogs[i] == frog) return i;
+	        }
+	        return -1;
+	    }
+
+	    // --- Movimento rana ---
+	    // Richiedono la rana su cui agire, per supportare più rane in contemporanea
+
+	    public void moveFrogUp(Frog frog) { frog.moveUp(); frog.correctPosition(); }
+	    public void moveFrogDown(Frog frog) { frog.moveDown(); frog.correctPosition(); }
+	    public void moveFrogLeft(Frog frog) { frog.moveLeft(); frog.correctPosition(); }
+	    public void moveFrogRight(Frog frog) { frog.moveRight(); frog.correctPosition(); }
+
+	    // --- Gestione oggetti mobili (condivisi tra tutti i giocatori) ---
+
+	    public void addMovingObject(int playerIndex, MovingObject obj) { movingObjects[playerIndex].add(obj); }
+	    public void addMovingObject(MovingObject obj) { movingObjects[0].add(obj); }
+	    public void removeMovingObject(int playerIndex, MovingObject obj) { movingObjects[playerIndex].remove(obj); }
+	    public void removeMovingObject(MovingObject obj) { movingObjects[0].remove(obj); }
+
+	    public void updateMovingObjects() {
+	        for (ArrayList<MovingObject> playerObjects : movingObjects) {
+	            for (MovingObject obj : playerObjects) {
+	                obj.updatePosition();
+	            }
+	        }
+	    }
+
 }
