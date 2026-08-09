@@ -366,6 +366,96 @@ public class Game {
 	        }
 	        return true;
 	    }
+	    
+	    // --- Spawn cuore (condiviso: il primo che lo raccoglie ottiene il beneficio) ---
+
+
+	    // Genera un cuore indipendente per ciascun giocatore, all'interno della SUA metà schermo
+	    // (così con 2 giocatori entrambi hanno la stessa possibilità di trovarne uno, e non capita
+	    // che un cuore casuale finisca tutto dalla parte di un solo giocatore).
+	    public void heartSpawn() {
+	        LocalDateTime now = LocalDateTime.now();
+	        int numberOfFrogs = frogs.length;
+	        int sectionWidth = (numberOfFrogs == 1) ? map.getWidth() : map.getWidth() / numberOfFrogs;
+
+	        for (int p = 0; p < numberOfFrogs; p++) {
+	            long secondsSinceLastSpawn = this.lastHeartSpawnTime[p].until(now, ChronoUnit.SECONDS);
+
+	            if (!this.isHeartSpawned[p] && secondsSinceLastSpawn >= HEART_SPAWN_INTERVAL) {
+	                int xBase = p * sectionWidth;
+	                int x = xBase + rnd.nextInt(0, sectionWidth - Heart.getHeartWidth());
+	                int y = rnd.nextInt(0, map.getHeight() - Heart.getHeartHeight());
+	                this.hearts[p] = new Heart(x, y);
+	                this.isHeartSpawned[p] = true;
+	                this.heartSpawnCycles[p]++;
+	                this.lastHeartSpawnTime[p] = now;
+	            }
+	        }
+	    }
+
+	    // --- Spawn insetto in una tana libera casuale ---
+	    // Distribuisce gli insetti tra le tane di TUTTI i giocatori (ognuno ha le proprie tane)
+
+	    public void insectSpawn() {
+	        LocalDateTime now = LocalDateTime.now();
+	        long seconds = this.lastInsectSpawnTime.until(now, ChronoUnit.SECONDS);
+
+	        boolean anyInsectActive = false;
+	        for (HomeSlot[] playerSlots : homeSlots) {
+	            for (HomeSlot slot : playerSlots) {
+	                if (slot.hasInsect()) { anyInsectActive = true; break; }
+	            }
+	            if (anyInsectActive) break;
+	        }
+
+	        if (!anyInsectActive && seconds >= INSECT_SPAWN_INTERVAL) {
+	            // Raccoglie tutte le tane libere senza insetto, di qualsiasi giocatore
+	            ArrayList<HomeSlot> freeSlots = new ArrayList<>();
+	            for (HomeSlot[] playerSlots : homeSlots) {
+	                for (HomeSlot slot : playerSlots) {
+	                    if (!slot.isOccupied() && !slot.hasInsect()) {
+	                        freeSlots.add(slot);
+	                    }
+	                }
+	            }
+	            if (!freeSlots.isEmpty()) {
+	                HomeSlot slot = freeSlots.get(rnd.nextInt(freeSlots.size()));
+	                Insect insect = new Insect(slot.getX(), slot.getY(), 0);
+	                slot.setInsect(insect);
+	            }
+	            this.lastInsectSpawnTime = now;
+	        }
+
+	        // Controlla scadenza insetti nelle tane di tutti i giocatori
+	        for (HomeSlot[] playerSlots : homeSlots) {
+	            for (HomeSlot slot : playerSlots) {
+	                if (slot.hasInsect() && slot.getInsect().isExpired()) {
+	                    slot.getInsect().deactivate();
+	                    slot.setInsect(null);
+	                    this.lastInsectSpawnTime = LocalDateTime.now();
+	                }
+	            }
+	        }
+	    }
+
+	    // --- Controllo collisione cuore, per tutte le rane ---
+
+	    // --- Controllo collisione cuore, per ciascun giocatore con il proprio cuore ---
+
+	    public boolean checkHeartCollision() {
+	        boolean any = false;
+	        for (int p = 0; p < frogs.length; p++) {
+	            if (hearts[p] == null || !isHeartSpawned[p]) continue;
+	            Frog frog = frogs[p];
+	            if (frog == null) continue;
+	            if (checkCollectibleCollision(hearts[p], frog)) {
+	                isHeartSpawned[p] = false;
+	                hearts[p] = null;
+	                any = true;
+	            }
+	        }
+	        return any;
+	    }
 
 	    
 	    
