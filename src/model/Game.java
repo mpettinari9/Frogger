@@ -247,4 +247,143 @@ public class Game {
 	        }
 	    }
 
+	    // Verifica collisione con gli oggetti mobili per tutte le rane in partita
+	    public boolean checkMovingObjectCollision() {
+	        boolean collisionFound = false;
+	        for (int i = 0; i < frogs.length; i++) {
+	            Frog frog = frogs[i];
+	            if (frog == null || frog.isDead()) continue;
+
+	            for (MovingObject obj : movingObjects[i]) {
+	                if (frog.getHitBox().intersects(obj.getHitBox())) {
+	                    movingObjectCollision(frog, i, obj);
+	                    collisionFound = true;
+	                    break;
+	                }
+	            }
+	        }
+	        return collisionFound;
+	    }
+
+	    // Verifica annegamento/trasporto su tronchi e tartarughe, per tutte le rane
+	    public void checkWaterCollision() {
+	        for (int i = 0; i < frogs.length; i++) {
+	            checkWaterCollision(frogs[i], i);
+	        }
+	    }
+
+	    private void checkWaterCollision(Frog frog, int frogIndex) {
+	        if (frog == null || frog.getLives() <= 0) return;
+
+	        if (frog.isInWaterArea()) {
+	            boolean onPlatform = false;
+	            MovingObject platformObject = null;
+
+	            for (MovingObject obj : movingObjects[frogIndex]) {
+	                MovingObjectType type = obj.getMovingObjectType();
+	                if ((type == MovingObjectType.TURTLE || type == MovingObjectType.TRUNK)
+	                        && frog.getHitBox().intersects(obj.getHitBox())) {
+	                    onPlatform = true;
+	                    platformObject = obj;
+	                    break;
+	                }
+	            }
+
+	            if (onPlatform && platformObject != null) {
+	                onWaterObject(frog, platformObject);
+	                frog.correctPosition();
+	            } else {
+	                if (frog.getLives() > 1) {
+	                    frog.loseLife();
+	                    frog.resetToInitialPosition();
+	                    death[frogIndex] = "";
+	                } else {
+	                    frog.loseLife();
+	                    frog.resetToInitialPosition();
+	                    if (death[frogIndex].isEmpty()) {
+	                        death[frogIndex] = "Drowned in water - " + formatMatchTime();
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    public void onWaterObject(Frog frog, MovingObject waterObj) {
+	        if (waterObj.getDirection() == Direction.RIGHT) {
+	            frog.setX(frog.getX() + waterObj.getSpeed());
+	        } else {
+	            frog.setX(frog.getX() - waterObj.getSpeed());
+	        }
+	        frog.updateHitBox();
+	    }
+
+	    // --- Collisione generica con Collectible (cuore, insetto) ---
+	    // Instrada il punteggio al giocatore corretto tramite indexOfFrog,
+	    // dato che Collectible.onCollect riceve solo l'oggetto Frog.
+
+	    public boolean checkCollectibleCollision(Collectible c, Frog frog) {
+	        if (c == null || !c.isActive() || frog == null) return false;
+	        if (frog.getHitBox().intersects(c.getHitBox())) {
+	            c.onCollect(frog, this);
+	            return true;
+	        }
+	        return false;
+	    }
+	    
+	 // --- Spawn e controllo tane ---
+
+	    // Controlla se una specifica rana ha raggiunto una propria tana libera
+	    private boolean checkHomeSlotCollision(Frog frog, int frogIndex) {
+	        if (frog == null) return false;
+
+	        for (HomeSlot slot : homeSlots[frogIndex]) {
+	            if (!slot.isOccupied() && frog.getHitBox().intersects(slot.getHitBox())) {
+	                if (slot.hasInsect()) {
+	                    slot.getInsect().onCollect(frog, this);
+	                }
+	                slot.setOccupied(true);
+	                addScore(frogIndex, SLOT_POINTS);
+	                frog.resetToInitialPosition();
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+
+	    // Controlla le tane per tutte le rane in partita
+	    public boolean checkHomeSlotCollision() {
+	        boolean any = false;
+	        for (int i = 0; i < frogs.length; i++) {
+	            if (checkHomeSlotCollision(frogs[i], i)) any = true;
+	        }
+	        return any;
+	    }
+
+	    // Verifica se tutte le 5 tane del giocatore all'indice "index" sono occupate
+	    private boolean allSlotsOccupied(int index) {
+	        for (HomeSlot slot : homeSlots[index]) {
+	            if (!slot.isOccupied()) return false;
+	        }
+	        return true;
+	    }
+
+	    
+	    
+	    
+	    // --- Timer partita ---
+
+	    private long getDurationSeconds(LocalDateTime time) { return this.startTime.until(time, ChronoUnit.SECONDS) % 60; }
+	    private long getDurationMinutes(LocalDateTime time) { return this.startTime.until(time, ChronoUnit.MINUTES) % 60; }
+	    private long getDurationHours(LocalDateTime time) { return this.startTime.until(time, ChronoUnit.HOURS) % 24; }
+
+	    public long getMatchDurationSeconds() { return this.getDurationSeconds(LocalDateTime.now()); }
+	    public long getMatchDurationMinutes() { return this.getDurationMinutes(LocalDateTime.now()); }
+	    public long getMatchDurationHours() { return this.getDurationHours(LocalDateTime.now()); }
+
+	    private String formatMatchTime() {
+	        return String.format("%02d:%02d:%02d",
+	                getMatchDurationHours(),
+	                getMatchDurationMinutes(),
+	                getMatchDurationSeconds());
+	    }
 }
