@@ -72,8 +72,50 @@ public class Game {
 	        initHomeSlots(numberOfFrogs); // Inizializza le 5 tane per ciascun giocatore
 	    }
 
-	private void initHomeSlots(int numberOfFrogs) {
-		// TODO Auto-generated method stub
-		
-	}
+	// Inizializza le tane di ciascun giocatore, distribuite uniformemente in cima alla mappa.
+	    // Con 1 giocatore: 5 tane su tutta la larghezza (come nell'originale single-player).
+	    // Con 2 giocatori: 5 tane sulla metà sinistra (Giocatore 1) e 5 sulla metà destra (Giocatore 2),
+	    // così le corsie di ciascuno restano ben distinte e non si accavallano visivamente.
+	    private void initHomeSlots(int numberOfFrogs) {
+	        int slotY = 10; // allineato alla posizione visiva delle tane a schermo
+	        homeSlots = new HomeSlot[numberOfFrogs][NUM_SLOTS];
+
+	        for (int p = 0; p < numberOfFrogs; p++) {
+	            int sectionWidth = map.getWidth() / numberOfFrogs;
+	            int sectionStart = (p * sectionWidth) - 15;
+	            int spacing = (sectionWidth / NUM_SLOTS) + 5;
+
+	            for (int i = 0; i < NUM_SLOTS; i++) {
+	                int slotX = sectionStart + i * spacing + (spacing - HomeSlot.SLOT_WIDTH) / 2;
+	                homeSlots[p][i] = new HomeSlot(slotX, slotY);
+	            }
+	        }
+	    }
+
+	    // --- Getter e setter ---
+
+	    public Map getMap() { return map; }
+
+	    public Frog[] getFrogs() { return frogs; }
+	    public void setFrog(int index, Frog frog) { this.frogs[index] = frog; }
+	    public int getNumberOfFrogs() { return this.frogs.length; }
+
+	    public ArrayList<MovingObject> getMovingObjects(int playerIndex) { return movingObjects[playerIndex]; }
+	    // Retrocompatibilità single player
+	    public ArrayList<MovingObject> getMovingObjects() { return movingObjects[0]; }
+	    public Heart getHeart(int playerIndex) { return hearts[playerIndex]; }
+	    public boolean isHeartSpawned(int playerIndex) { return isHeartSpawned[playerIndex]; }
+	    public String getDeath(int index) { return death[index]; }
+	    public String[] getDeath() { return death; }
+	    public Random getRandomNumberGenerator() { return rnd; }
+	    public LocalDateTime getStartTime() { return startTime; }
+	    public int getEarnLifeSpawnCycles(int playerIndex) { return heartSpawnCycles[playerIndex]; }
+
+	    // Restituisce le 5 tane del giocatore all'indice "index"
+	    public HomeSlot[] getHomeSlots(int index) { return homeSlots[index]; }
+	    public HomeSlot[][] getHomeSlots() { return homeSlots; }
+
+	    public int getScore(int index) { return scores[index]; }
+	    public int[] getScores() { return scores; }
+
 }
