@@ -163,4 +163,88 @@ public class Game {
 	        }
 	    }
 
+	    public void spawnMovingObject() {
+	        if (!objectsSpawned) {
+	            for (int p = 0; p < frogs.length; p++) {
+	                // Per il giocatore p la mappa è la metà corrispondente
+	                // Con 1 giocatore: intera larghezza. Con 2: metà ciascuno.
+	                int sectionWidth = (frogs.length == 1) ? map.getWidth() : map.getWidth() / frogs.length;
+	                int xBase = p * sectionWidth;
+	                // Spawn 5 oggetti per tipo per ciascun giocatore
+	                // Con 2 giocatori la sezione è metà schermo: 3 oggetti per tipo bastano
+	                // Con 1 giocatore si usa l'intera larghezza: 5 oggetti come prima
+	                int numObjects = (frogs.length == 1) ? 5 : 3;
+	                for (int i = 0; i < numObjects; i++) {
+	                    int offsetInSection = (i * sectionWidth) / numObjects;
+	                    spawnMovingObjectByType(p, MovingObjectType.CAR, xBase + offsetInSection, sectionWidth);
+	                    spawnMovingObjectByType(p, MovingObjectType.TRUCK, xBase + offsetInSection, sectionWidth);
+	                    spawnMovingObjectByType(p, MovingObjectType.TURTLE, xBase + offsetInSection, sectionWidth);
+	                    spawnMovingObjectByType(p, MovingObjectType.TRUNK, xBase + offsetInSection, sectionWidth);
+	                }
+	            }
+	            objectsSpawned = true;
+	        }
+	    }
+
+	    private void spawnMovingObjectByType(int playerIndex, MovingObjectType type, int xStart, int sectionWidth) {
+	        int x, y;
+	        Direction direction;
+
+	        switch (type) {
+	            case CAR:
+	                y = (carLaneCount == 0) ? 500 : 440;
+	                carLaneCount = (carLaneCount + 1) % 2;
+	                direction = Direction.RIGHT;
+	                x = xStart;
+	                break;
+	            case TRUCK:
+	                y = (truckLaneCount == 0) ? 390 : 340;
+	                truckLaneCount = (truckLaneCount + 1) % 2;
+	                direction = Direction.LEFT;
+	                x = xStart + SPAWN_OFFSET;
+	                break;
+	            case TURTLE:
+	                y = (turtleLaneCount == 0) ? 105 : 225;
+	                turtleLaneCount = (turtleLaneCount + 1) % 2;
+	                direction = Direction.RIGHT;
+	                x = xStart;
+	                break;
+	            case TRUNK:
+	                y = (trunkLaneCount == 0) ? 55 : 165;
+	                trunkLaneCount = (trunkLaneCount + 1) % 2;
+	                direction = Direction.LEFT;
+	                x = xStart + SPAWN_OFFSET;
+	                break;
+	            default:
+	                return;
+	        }
+
+	        // Usa la mappa intera ma con un offset per confinare gli oggetti nella sezione del giocatore
+	        MovingObject obj = new MovingObject(x, y, type, map, xStart);
+	        obj.setDirection(direction);
+	        obj.setSectionBounds(playerIndex * sectionWidth, playerIndex * sectionWidth + sectionWidth);
+	        movingObjects[playerIndex].add(obj);
+	    }
+
+	    // --- Collisioni con oggetti mobili ---
+
+	    private void movingObjectCollision(Frog frog, int frogIndex, MovingObject obj) {
+	        switch (obj.getMovingObjectType()) {
+	            case CAR:
+	            case TRUCK:
+	                if (frog.getLives() > 1) {
+	                    frog.loseLife();
+	                    frog.resetToInitialPosition();
+	                  
+	                } else {
+	                    frog.loseLife();
+	                    frog.resetToInitialPosition();
+	                }
+	                break;
+	            case TURTLE:
+	            case TRUNK:
+	                break;
+	        }
+	    }
+
 }
