@@ -457,7 +457,47 @@ public class Game {
 	        return any;
 	    }
 
-	    
+	    // --- Game over ---
+	    // Verifica se una specifica rana ha concluso la propria gara (vinto occupando le 5 tane, o perso le vite)
+	    private boolean checkFrogOver(Frog frog, int index) {
+	        if (frog == null) return false;
+
+	        boolean hasLost = frog.getLives() <= 0;
+	        boolean hasWon = allSlotsOccupied(index);
+
+	        if ((hasLost || hasWon) && death[index].isEmpty())
+	            death[index] = formatMatchTime();
+
+	        return hasLost || hasWon;
+	    }
+
+	    // La partita finisce quando TUTTE le rane hanno concluso la propria gara (vinto o perso)
+	    public boolean checkGameOver() {
+	        boolean allOver = true;
+	        for (int i = 0; i < frogs.length; i++) {
+	            allOver = allOver && checkFrogOver(frogs[i], i);
+	        }
+	        return allOver;
+	    }
+
+	    // Indica se la rana all'indice "index" ha vinto la propria gara (tutte le tane occupate)
+	    public boolean hasFrogWon(int index) {
+	        return allSlotsOccupied(index);
+	    }
+
+	    // --- Ciclo principale ---
+
+	    public void update() {
+	        spawnMovingObject();
+	        updateMovingObjects();
+	        checkMovingObjectCollision();
+	        checkWaterCollision();
+	        checkHomeSlotCollision();
+	        heartSpawn();
+	        checkHeartCollision();
+	        insectSpawn();
+	        checkGameOver();
+	    }
 	    
 	    
 	    // --- Timer partita ---
