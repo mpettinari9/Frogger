@@ -3,6 +3,8 @@ package view;
 import java.awt.*;
 import javax.swing.*;
 
+import model.Difficulty;
+
 /*
  * Pannello della schermata iniziale.
  * Permette al giocatore di inserire il proprio nome e avviare la partita.
@@ -10,64 +12,27 @@ import javax.swing.*;
 public class TitlePanel extends JPanel {
 	private JButton startButton;
 	private JButton tutorialButton;
-	private JTextField nameField;
-	private JLabel nameLabel;
-	
-	public TitlePanel(int screenWidth, int screenHeight) {
-		this.setSize(screenWidth, screenHeight);
-		this.setLayout(null);
-	
-		this.startButton = new JButton("AVVIA PARTITA");
-		this.startButton.setBackground(Color.green);
-		this.startButton.setFont(new Font("DIALOG", Font.BOLD, 24));
-		this.startButton.setBounds(screenWidth/3, screenHeight*6/10, screenWidth/3, screenHeight/10);
-		
-		
-        this.nameLabel = new JLabel("Inserisci il tuo nome:");
-        this.nameLabel.setFont(new Font("DIALOG", Font.BOLD, 24));
-        this.nameLabel.setHorizontalAlignment(JLabel.CENTER);
-        this.nameLabel.setBounds(screenWidth/3, screenHeight*4/10, screenWidth/3, screenHeight/10);
-      	
-		this.nameField = new JTextField();
-		this.nameField.setBackground(Color.green);
-		this.nameField.setHorizontalAlignment(JTextField.CENTER);
-		this.nameField.setFont(new Font("DIALOG", Font.BOLD, 24));
-		this.nameField.setBounds(screenWidth/3, screenHeight*5/10, screenWidth/3, screenHeight/10);
-		
-		this.tutorialButton = new JButton("TUTORIAL");
-		this.tutorialButton.setBackground(Color.BLUE);
-		this.tutorialButton.setFont(new Font("DIALOG", Font.BOLD, 24));
-		this.tutorialButton.setBounds(screenWidth/3, screenHeight*8/10, screenWidth/3, screenHeight/10);
-		
-		this.add(this.nameLabel);
-		this.add(this.nameField);
-		this.add(this.tutorialButton);
-		this.add(this.startButton);
-	}
-	
-	// Metodi getter e setter
-	public JButton getStartButton(){
-		return startButton;
-	}
-	
-	public JButton getTutorialButton() {
-		return tutorialButton;
-	}
+	private JTextField nameField1;
+	private JTextField nameField2;
+	private JLabel nameLabel1;
+	private JLabel nameLabel2;
+	// Bottoni per selezionare 1 o 2 giocatori (sostituiscono lo slider)
+	private JToggleButton btn1Player;
+	private JToggleButton btn2Players;
+	private ButtonGroup playerGroup;
+	// Modalità "vs CPU": checkbox e selettore di difficoltà (sostituiscono il Giocatore 2 quando attivi)
+	private JCheckBox chkVsCPU;
+	private JLabel difficultyLabel;
+	private JToggleButton btnEasy;
+	private JToggleButton btnMedium;
+	private JToggleButton btnHard;
+	private ButtonGroup difficultyGroup;
 
-	public JTextField getNameField() {
-		return nameField;
-	}
+	// Palette colori in linea con il gioco
+	private static final Color BLU_SCURO   = new Color(0, 0, 139);
+	private static final Color VERDE_RANA  = new Color(0, 200, 0);
+	private static final Color GIALLO_TESTO = new Color(255, 220, 0);
+	private static final Color BIANCO   = Color.WHITE; 
 	
-	public String getFrogName() {
-        return nameField.getText().trim();
-    }
-	
-	public JLabel getNameLabel() {
-		return nameLabel;
-	}
-	
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.drawImage(new ImageIcon("src/view/Asset/sfondofrogger.png").getImage(), 0, 0, this.getWidth(), this.getHeight(), this);
-	}
+
 }
