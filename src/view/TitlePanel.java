@@ -162,30 +162,60 @@ public class TitlePanel extends JPanel {
 		this.add(this.startButton);
 	}
 		
-	private Object updateVsCpuFields() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	// Stile comune ai bottoni toggle
+		private void styleToggle(JToggleButton btn, boolean selected) {
+			btn.setFont(new Font("DIALOG", Font.BOLD, 16));
+			btn.setFocusPainted(false);
+			btn.setBorderPainted(false);
+			btn.setForeground(Color.BLACK);
+			btn.setBackground(selected ? VERDE_RANA : new Color(0, 100, 0));
+			// Aggiorna colore quando cambia stato
+			btn.addChangeListener(e -> btn.setBackground(btn.isSelected() ? VERDE_RANA : new Color(0, 100, 0)));
+		}
 
-	private void styleToggle(JToggleButton btn1Player2, boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
+		// Stile comune alle label
+		private void styleLabelField(JLabel label) {
+			label.setFont(new Font("DIALOG", Font.BOLD, 18));
+			label.setForeground(GIALLO_TESTO);
+			label.setHorizontalAlignment(JLabel.CENTER);
+		}
 
-	private Object updatePlayerFields(boolean b) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		// Stile comune ai campi testo
+		private void styleTextField(JTextField field) {
+			field.setBackground(VERDE_RANA);
+			field.setForeground(Color.BLACK);
+			field.setHorizontalAlignment(JTextField.CENTER);
+			field.setFont(new Font("DIALOG", Font.BOLD, 18));
+			field.setBorder(BorderFactory.createLineBorder(GIALLO_TESTO, 2));
+			field.setCaretColor(Color.BLACK);
+		}
 
-	private void styleTextField(JTextField nameField22) {
-		// TODO Auto-generated method stub
-		
-	}
+		// Mostra/nasconde i campi del secondo giocatore e aggiorna il testo dei comandi
+		private void updatePlayerFields(boolean twoPlayers) {
+			chkVsCPU.setVisible(twoPlayers);
+			if (!twoPlayers) {
+				chkVsCPU.setSelected(false);
+			}
+			updateVsCpuFields();
+			// Con 2 giocatori: G1 a sinistra usa WASD, G2 a destra usa le freccette.
+			// Con 1 giocatore: G1 usa le freccette.
+			nameLabel1.setText(twoPlayers ? "NOME GIOCATORE 1 (WASD):" : "NOME GIOCATORE 1 (Freccette):");
+			repaint();
+		}
 
-	private void styleLabelField(JLabel nameLabel12) {
-		// TODO Auto-generated method stub
-		
-	}
+		// Mostra i campi nome del Giocatore 2, oppure il selettore di difficoltà se si gioca contro la CPU
+		private void updateVsCpuFields() {
+			boolean twoPlayers = btn2Players.isSelected();
+			boolean vsCpu = twoPlayers && chkVsCPU.isSelected();
+
+			nameLabel2.setVisible(twoPlayers && !vsCpu);
+			nameField2.setVisible(twoPlayers && !vsCpu);
+
+			difficultyLabel.setVisible(vsCpu);
+			btnEasy.setVisible(vsCpu);
+			btnMedium.setVisible(vsCpu);
+			btnHard.setVisible(vsCpu);
+		}
 	
 	// Metodi getter e setter
 	public JButton getStartButton() {
