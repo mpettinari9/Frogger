@@ -122,8 +122,52 @@ public class GamePanel extends JPanel {
             this.infoPanel.add(this.scoreLabels[i]);
         }
 
+        this.movingObjectSprites = new ArrayList[numberOfPlayers];
+        for (int i = 0; i < numberOfPlayers; i++) {
+            this.movingObjectSprites[i] = new ArrayList<>();
+        }
+        this.heartSprites = new HeartSprite[numberOfPlayers];
+        this.insectSprites = new JLabel[numberOfPlayers][5];
+        this.homeSlotSprites = null;
 
-    
-    
+        this.add(this.gamePanel);
+        this.add(this.infoPanel);
+
+        // Linea divisoria anche nell'infoPanel per continuità visiva
+        if (numberOfPlayers == 2) {
+            JPanel infoDivider = new JPanel();
+            infoDivider.setBounds(playerPanelWidth - 2, 0, 4, screenHeight - gamePanelHeight);
+            infoDivider.setBackground(Color.WHITE);
+            this.infoPanel.add(infoDivider);
+            this.infoPanel.setComponentZOrder(infoDivider, 0);
+        }
     }
+    
+    // Converte coordinata X globale (modello) in coordinata locale del playerPanel
+    private int toLocalX(int globalX, int playerIndex) {
+        if (numberOfPlayers == 1) return globalX;
+        return globalX - playerIndex * playerPanelWidth;
+    }
+
+    public JPanel getPlayerPanel(int playerIndex) { return playerPanels[playerIndex]; }
+    public JPanel getGamePanel() { return gamePanel; }
+    public JPanel getInfoPanel() { return infoPanel; }
+    public FrogSprite getFrogSprite(int index) { return frogSprites[index]; }
+    public FrogSprite[] getFrogSprites() { return frogSprites; }
+    public HeartSprite getHeartSprite(int playerIndex) { return heartSprites[playerIndex]; }
+    public ArrayList<MovingObjectSprite> getMovingObjectSprites(int playerIndex) { return movingObjectSprites[playerIndex]; }
+    public ArrayList<MovingObjectSprite> getMovingObjectSprites() { return movingObjectSprites[0]; }
+    public JLabel getInsectSprite(int playerIndex, int slotIndex) { return insectSprites[playerIndex][slotIndex]; }
+    public HomeSlotSprite[] getHomeSlotSprites(int playerIndex) { return homeSlotSprites[playerIndex]; }
+    public HomeSlotSprite[][] getHomeSlotSprites() { return homeSlotSprites; }
+
+    // --- Rana ---
+    public void setFrogSprite(int index, int x, int y, String[] walkUp, String[] walkDown, String[] walkLeft, String[] walkRight) {
+        if (this.frogSprites[index] == null) {
+            this.frogSprites[index] = new FrogSprite(walkUp, walkDown, walkLeft, walkRight);
+            this.frogSprites[index].setBounds(toLocalX(x, index), y, 60, 60);
+            playerPanels[index].add(this.frogSprites[index]);
+        }
+    }
+
 }
