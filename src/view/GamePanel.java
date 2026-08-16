@@ -80,6 +80,48 @@ public class GamePanel extends JPanel {
                         0, 0, this.getWidth(), this.getHeight(), this);
             }
         };
+        this.infoPanel.setBounds(0, gamePanelHeight, screenWidth, screenHeight - gamePanelHeight);
+        this.infoPanel.setLayout(null);
+
+        this.timeLabel = new JLabel("00:00:00");
+        this.timeLabel.setBounds(0, 0, screenWidth, 30);
+        this.timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.timeLabel.setForeground(Color.WHITE);
+        this.infoPanel.add(timeLabel);
+
+        this.livesBars = new JProgressBar[numberOfPlayers];
+        this.scoreLabels = new JLabel[numberOfPlayers];
+        this.frogSprites = new FrogSprite[numberOfPlayers];
+
+        int topOffset = -30; // margine superiore per alzare i widget nella HUD
+        int columnWidth = screenWidth / numberOfPlayers;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            JLabel nameLabel = new JLabel(playersNames[i]);
+            nameLabel.setBounds(columnWidth * i, this.timeLabel.getHeight() + topOffset, columnWidth, this.infoPanel.getHeight() / 7);
+            nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            nameLabel.setForeground(Color.WHITE);
+            this.infoPanel.add(nameLabel);
+
+            this.livesBars[i] = new JProgressBar();
+            this.livesBars[i].setMaximum(playersLifeMaxValues[i]);
+            this.livesBars[i].setValue(playersLifeValues[i]);
+            this.livesBars[i].setStringPainted(true);
+            this.livesBars[i].setString(playersLifeValues[i] + "/" + playersLifeMaxValues[i]);
+            this.livesBars[i].setForeground(Color.RED);
+            this.livesBars[i].setBounds((columnWidth * i) + 20, nameLabel.getY() + nameLabel.getHeight(),
+                    columnWidth - 40, this.infoPanel.getHeight() / 7);
+            this.infoPanel.add(this.livesBars[i]);
+
+            this.scoreLabels[i] = new JLabel("Punteggio: 0");
+            this.scoreLabels[i].setBounds((columnWidth * i) + 20,
+                    this.livesBars[i].getY() + this.livesBars[i].getHeight() + 4,
+                    columnWidth - 40, this.infoPanel.getHeight() / 7);
+            this.scoreLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+            this.scoreLabels[i].setFont(new Font("DIALOG", Font.BOLD, 16));
+            this.scoreLabels[i].setForeground(Color.WHITE);
+            this.infoPanel.add(this.scoreLabels[i]);
+        }
+
 
     
     
