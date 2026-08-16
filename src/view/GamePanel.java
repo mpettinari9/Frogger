@@ -218,4 +218,61 @@ public class GamePanel extends JPanel {
         }
     }
 
+    // --- Cuore ---
+    // x è la coordinata GLOBALE (modello); viene convertita in locale rispetto al pannello del giocatore
+    public void addHeart(int playerIndex, int x, int y) {
+        if (heartSprites[playerIndex] == null) {
+            HeartSprite sprite = new HeartSprite("src/view/Asset/heart.png");
+            sprite.setBounds(toLocalX(x, playerIndex), y, 60, 60);
+            heartSprites[playerIndex] = sprite;
+            playerPanels[playerIndex].add(sprite);
+        }
+    }
+
+    public void removeHeart(int playerIndex) {
+        if (heartSprites[playerIndex] != null) {
+            playerPanels[playerIndex].remove(heartSprites[playerIndex]);
+            heartSprites[playerIndex] = null;
+            playerPanels[playerIndex].repaint();
+        }
+    }
+
+    // --- Oggetti mobili ---
+    public void addMovingObject(int playerIndex, MovingObjectTypeSprite type, int x, int y) {
+        MovingObjectSprite obj = new MovingObjectSprite(
+                "src/view/Asset/" + type.toString().toLowerCase() + ".png"
+        );
+        obj.setBounds(toLocalX(x, playerIndex), y, obj.getIcon().getIconWidth(), obj.getIcon().getIconHeight());
+        movingObjectSprites[playerIndex].add(obj);
+        playerPanels[playerIndex].add(obj);
+    }
+
+    // --- Aggiornamento ---
+    public void updateGameWindow(int frogIndex, int frogX, int frogY, SpriteDirection frogDirection,
+                                  int frogLife, int frogMaxLife,
+                                  ArrayList<Integer> movingX, ArrayList<Integer> movingY,
+                                  long hours, long minutes, long seconds,
+                                  int score) {
+        if (frogSprites[frogIndex] != null) {
+            frogSprites[frogIndex].setBounds(
+                    toLocalX(frogX, frogIndex), frogY,
+                    frogSprites[frogIndex].getWidth(), frogSprites[frogIndex].getHeight());
+        }
+
+        livesBars[frogIndex].setValue(frogLife);
+        livesBars[frogIndex].setMaximum(frogMaxLife);
+        livesBars[frogIndex].setString(frogLife + "/" + frogMaxLife);
+
+        scoreLabels[frogIndex].setText("Punteggio: " + score);
+        timeLabel.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+
+        ArrayList<MovingObjectSprite> sprites = movingObjectSprites[frogIndex];
+        for (int i = 0; i < sprites.size(); i++) {
+            if (i < movingX.size() && i < movingY.size()) {
+                sprites.get(i).setLocation(toLocalX(movingX.get(i), frogIndex), movingY.get(i));
+            }
+        }
+
+        playerPanels[frogIndex].repaint();
+    }
 }
