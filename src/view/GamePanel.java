@@ -1,6 +1,9 @@
 package view;
 
 import javax.swing.*;
+
+import model.HomeSlot;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -167,6 +170,51 @@ public class GamePanel extends JPanel {
             this.frogSprites[index] = new FrogSprite(walkUp, walkDown, walkLeft, walkRight);
             this.frogSprites[index].setBounds(toLocalX(x, index), y, 60, 60);
             playerPanels[index].add(this.frogSprites[index]);
+        }
+    }
+    
+    // --- Insetto ---
+    public void addInsect(int playerIndex, int slotIndex, int x, int y) {
+        if (insectSprites[playerIndex][slotIndex] == null) {
+            JLabel sprite = new JLabel(new ImageIcon("src/view/Asset/bug_goal.png"));
+            int insectW = 40, insectH = 40;
+            int centeredX = toLocalX(x, playerIndex) + (HomeSlot.SLOT_WIDTH - insectW) / 2;
+            int centeredY = y + (HomeSlot.SLOT_HEIGHT - insectH) / 2;
+            sprite.setBounds(centeredX, centeredY, insectW, insectH);
+            insectSprites[playerIndex][slotIndex] = sprite;
+            playerPanels[playerIndex].add(sprite);
+            playerPanels[playerIndex].setComponentZOrder(sprite, 0);
+            playerPanels[playerIndex].repaint();
+        }
+    }
+
+    public void removeInsect(int playerIndex, int slotIndex) {
+        if (insectSprites[playerIndex][slotIndex] != null) {
+            playerPanels[playerIndex].remove(insectSprites[playerIndex][slotIndex]);
+            insectSprites[playerIndex][slotIndex] = null;
+            playerPanels[playerIndex].repaint();
+        }
+    }
+
+    // --- Tane ---
+    public void initHomeSlotSprites(int[][] xs, int[][] ys, int width, int height) {
+        int numPlayers = xs.length;
+        homeSlotSprites = new HomeSlotSprite[numPlayers][];
+        for (int p = 0; p < numPlayers; p++) {
+            homeSlotSprites[p] = new HomeSlotSprite[xs[p].length];
+            for (int i = 0; i < xs[p].length; i++) {
+                int localX = toLocalX(xs[p][i], p);
+                homeSlotSprites[p][i] = new HomeSlotSprite(localX, ys[p][i], width, height);
+                playerPanels[p].add(homeSlotSprites[p][i]);
+            }
+        }
+        gamePanel.repaint();
+    }
+
+    public void updateHomeSlot(int playerIndex, int slotIndex, boolean occupied) {
+        if (homeSlotSprites != null && playerIndex >= 0 && playerIndex < homeSlotSprites.length
+                && slotIndex >= 0 && slotIndex < homeSlotSprites[playerIndex].length) {
+            homeSlotSprites[playerIndex][slotIndex].setOccupied(occupied);
         }
     }
 
