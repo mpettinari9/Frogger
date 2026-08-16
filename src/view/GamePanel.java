@@ -61,9 +61,27 @@ public class GamePanel extends JPanel {
             playerPanels[p] = panel;
             gamePanel.add(panel);
         }
-    }
+        
+        // Linea divisoria bianca tra i due schermi - aggiunta per ultima per stare sopra i playerPanels
+        if (numberOfPlayers == 2) {
+            JPanel divider = new JPanel();
+            divider.setBounds(playerPanelWidth - 2, 0, 4, gamePanelHeight);
+            divider.setBackground(Color.WHITE);
+            gamePanel.add(divider);
+            gamePanel.setComponentZOrder(divider, 0); // portala in primo piano
+        }
+
+        // --- Barra info ---
+        this.infoPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(new ImageIcon("src/view/Asset/sfondoInfo.png").getImage(),
+                        0, 0, this.getWidth(), this.getHeight(), this);
+            }
+        };
 
     
     
-    
+    }
 }
