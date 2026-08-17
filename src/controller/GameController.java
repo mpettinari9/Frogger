@@ -399,6 +399,26 @@ public class GameController implements KeyListener, Runnable {
     }
 
 
+    // Costruisce la stringa di risultato per il giocatore all'indice "index":
+    // nome, esito (vinto/perso), tempo di gioco e punteggio finale
+    private String buildResultText(int index) {
+        Frog[] frogs = gameModel.getFrogs();
+        String esito = gameModel.hasFrogWon(index) ? "VINTO" : "PERSO";
+        return frogs[index].getName() + ": Hai " + esito
+                + " - Tempo " + gameModel.getDeath(index)
+                + " - Punteggio " + gameModel.getScore(index);
+    }
+
+    // Converte Direction (modello) in SpriteDirection (vista)
+    private SpriteDirection modelToViewDirectionConverter(Direction dir) {
+        switch (dir) {
+            case UP: return SpriteDirection.UP;
+            case DOWN: return SpriteDirection.DOWN;
+            case LEFT: return SpriteDirection.LEFT;
+            default: return SpriteDirection.RIGHT;
+        }
+    }
+
 	 private void updateFrogSprites() {
 			// TODO Auto-generated method stub
 			
