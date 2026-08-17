@@ -94,7 +94,37 @@ public class GameController implements KeyListener, Runnable {
         
         // Crea mappa e modello
         Map map = new Map(SCREEN_WIDTH, SCREEN_HEIGHT, RIVER_TOP, RIVER_BOTTOM);
-        gameModel = new Game(map);
+        gameModel = new Game(map, numberOfPlayers);
+        aiController = vsCPU ? new AIController(gameModel, 1, difficulty) : null;
+
+        // Calcola le posizioni X iniziali: 1 giocatore al centro, 2 giocatori affiancati
+        this.startX = new int[numberOfPlayers];
+        if (numberOfPlayers == 1) {
+            startX[0] = SCREEN_WIDTH / 2 - FROG_SIZE / 2;
+        } else {
+            startX[0] = SCREEN_WIDTH / 4 - FROG_SIZE / 2;
+            startX[1] = (SCREEN_WIDTH * 3 / 4) - FROG_SIZE / 2;
+        }
+
+        int[] lifeValues = new int[numberOfPlayers];
+        int[] lifeMaxValues = new int[numberOfPlayers];
+
+        // Crea ciascuna rana con posizione e dimensioni iniziali
+        for (int i = 0; i < numberOfPlayers; i++) {
+            Frog frog = new Frog(frogNames[i], Direction.UP, new Size(FROG_SIZE, FROG_SIZE),
+                    new Position(startX[i], startY), map, 2);
+            // In modalità 2 giocatori, confina ogni rana nella propria metà dello schermo
+            if (numberOfPlayers == 2) {
+                int halfWidth = SCREEN_WIDTH / 2;
+                frog.setXBounds(i * halfWidth, (i + 1) * halfWidth);
+            }
+            gameModel.setFrog(i, frog);
+            lifeValues[i] = frog.getLives();
+            lifeMaxValues[i] = frog.getMaxLives();
+        }
+
+        // Crea pannello di gioco e collega listener tastiera
+        GamePanel gamePanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, frogNames, lifeValues, lifeMaxValues);
 
         // Crea rana con posizione e dimensioni iniziali 
         Frog frog = new Frog(frogName, Direction.UP, new Size(FROG_SIZE, FROG_SIZE),
@@ -119,7 +149,12 @@ public class GameController implements KeyListener, Runnable {
         }
     }
     
-    @Override
+    private String difficultyLabel(Difficulty difficulty) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
     public void keyTyped(KeyEvent e) {
     }
     
