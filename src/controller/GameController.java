@@ -69,7 +69,6 @@ public class GameController implements KeyListener, Runnable {
     
     }
 
-    // Inizializza modello, vista e thread di gioco con il nome inserito dal giocatore
     // Inizializza modello, vista e thread di gioco con i nomi inseriti dai giocatori
     private void startGame() {
         this.numberOfPlayers = this.gameWindow.getTitlePanel().getNumberOfPlayers();
@@ -125,16 +124,40 @@ public class GameController implements KeyListener, Runnable {
 
         // Crea pannello di gioco e collega listener tastiera
         GamePanel gamePanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, frogNames, lifeValues, lifeMaxValues);
+       
+        // Crea lo sprite per ciascuna rana: ognuna usa il proprio set di asset dedicato
+        // Giocatore 1: frogup1/2, frogdown1/2, frogleft1/2, frogright1/2
+        // Giocatore 2: frogup21/22, frogdown21/22, frogleft21/22, frogright21/22
+        for (int i = 0; i < numberOfPlayers; i++) {
+            String[] walkUp, walkDown, walkLeft, walkRight;
+            if (i == 0) {
+                walkUp = new String[] {"src/view/Asset/frogup1.png", "src/view/Asset/frogup2.png"};
+                walkDown = new String[] {"src/view/Asset/frogdown1.png", "src/view/Asset/frogdown2.png"};
+                walkLeft = new String[] {"src/view/Asset/frogleft1.png", "src/view/Asset/frogleft2.png"};
+                walkRight = new String[] {"src/view/Asset/frogright1.png", "src/view/Asset/frogright2.png"};
+            } else {
+                walkUp = new String[] {"src/view/Asset/frogup21.png", "src/view/Asset/frogup22.png"};
+                walkDown = new String[] {"src/view/Asset/frogdown21.png", "src/view/Asset/frogdown22.png"};
+                walkLeft = new String[] {"src/view/Asset/frogleft21.png", "src/view/Asset/frogleft22.png"};
+                walkRight = new String[] {"src/view/Asset/frogright21.png", "src/view/Asset/frogright22.png"};
+            }
+            gamePanel.setFrogSprite(i, startX[i], startY, walkUp, walkDown, walkLeft, walkRight);
+        }
 
-        // Crea rana con posizione e dimensioni iniziali 
-        Frog frog = new Frog(frogName, Direction.UP, new Size(FROG_SIZE, FROG_SIZE),
-                             new Position(startX, startY), map, 2);
-        gameModel.setFrog(frog);
- 
-        // Crea pannello di gioco e collega listener tastiera
-        GamePanel gamePanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT, frog.getName(),
-                                            frog.getLives(), frog.getMaxLives());
-        gamePanel.setFrogSprite(startX, startY);
+        // Crea gli sprite delle tane per ciascun giocatore, in base alle tane create dal modello
+        int[][] slotXs = new int[numberOfPlayers][];
+        int[][] slotYs = new int[numberOfPlayers][];
+        for (int p = 0; p < numberOfPlayers; p++) {
+            HomeSlot[] slots = gameModel.getHomeSlots(p);
+            slotXs[p] = new int[slots.length];
+            slotYs[p] = new int[slots.length];
+            for (int i = 0; i < slots.length; i++) {
+                slotXs[p][i] = slots[i].getX();
+                slotYs[p][i] = slots[i].getY();
+            }
+        }
+        gamePanel.initHomeSlotSprites(slotXs, slotYs, HomeSlot.SLOT_WIDTH, HomeSlot.SLOT_HEIGHT);
+
         gamePanel.addKeyListener(this);
         gamePanel.setFocusable(true);
 
@@ -183,12 +206,14 @@ public class GameController implements KeyListener, Runnable {
                  moveFrog(); // Legge input e muove rana
                 
                 gameModel.update(); // Aggiorna stato del modello (oggetti, collisioni, cuore)
-                
+               
                 // Sincronizza la vista con il modello
-                updateFrogSprite();
+                updateFrogSprites();
                 updateMovingObjects();
                 updateHeart();
-                updateFrog();
+                updateInsects();
+                updateHomeSlots();
+                updateFrogs();
 
                 if (gameModel.checkGameOver()) {
                     showGameOver();
@@ -222,30 +247,32 @@ public class GameController implements KeyListener, Runnable {
     
     // Sincronizza gli sprite degli oggetti mobili con le posizioni del modello.
     // Aggiunge nuovi sprite se il modello ha più oggetti della vista.
-	private void updateMovingObjects() {
-        ArrayList<MovingObject> modelObjects = gameModel.getMovingObjects();
-        ArrayList<MovingObjectSprite> viewSprites = gameWindow.getGamePanel().getMovingObjectSprites();
+    private void updateMovingObjects() {
+        for (int p = 0; p < numberOfPlayers; p++) {
+            ArrayList<MovingObject> modelObjects = gameModel.getMovingObjects(p);
+            ArrayList<MovingObjectSprite> viewSprites = gameWindow.getGamePanel().getMovingObjectSprites(p);
 
-        // Aggiunge sprite per oggetti non ancora presenti nella vista
-        for (int i = viewSprites.size(); i < modelObjects.size(); i++) {
-            MovingObject obj = modelObjects.get(i);
-            gameWindow.getGamePanel().addMovingObject(
-                modelToViewMovingObjectTypeConverter(obj.getMovingObjectType()),
-                obj.getPosition().getX(), 
-                obj.getPosition().getY()
-            );
-            viewSprites.get(i).setSpriteActions(true);
-        }
-
-        // Aggiorna posizione di ogni sprite esistente
+            for (int i = viewSprites.size(); i < modelObjects.size(); i++) {
+                MovingObject obj = modelObjects.get(i);
+                gameWindow.getGamePanel().addMovingObject(
+                        p,
+                        modelToViewMovingObjectTypeConverter(obj.getMovingObjectType()),
+                        obj.getPosition().getX(),
+                        obj.getPosition().getY()
+                );
+            }
+            
         for (int i = 0; i < Math.min(viewSprites.size(), modelObjects.size()); i++) {
             MovingObject obj = modelObjects.get(i);
+            int panelWidth = SCREEN_WIDTH / numberOfPlayers;
+            int localX = (numberOfPlayers == 1) ? obj.getPosition().getX() : obj.getPosition().getX() - p * panelWidth;
             viewSprites.get(i).setBounds(
-                obj.getPosition().getX(),
-                obj.getPosition().getY(),
-                viewSprites.get(i).getWidth(),
-                viewSprites.get(i).getHeight()
-            );
+                    localX,
+                    obj.getPosition().getY(),
+                    viewSprites.get(i).getWidth(),
+                    viewSprites.get(i).getHeight()
+            		);
+        	}
         }
     }
 
