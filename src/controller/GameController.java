@@ -8,8 +8,12 @@ import java.util.ArrayList;
 
 import model.*;
 import view.*;
-/*Controlla il flusso di gioco: gestisce input da tastiera, aggiorna il modello
-e sincronizza la vista ad ogni frame. Implementa il game loop a 60 FPS. */
+
+/* Controlla il flusso di gioco: gestisce input da tastiera, aggiorna il modello
+ * e sincronizza la vista ad ogni frame. Implementa il game loop a 60 FPS.
+ * Supporta 1 o 2 giocatori in locale: con 2 giocatori, Giocatore 1 (sinistra) = WASD, Giocatore 2 (destra) = Freccette.
+ * Con 2 giocatori si gioca in modalità GARA: ciascuno ha le proprie 5 tane,
+ * il proprio punteggio e le proprie vite; vince chi occupa prima tutte le tane. */
 
 public class GameController implements KeyListener, Runnable {
 	// Costanti di configurazione schermo e gioco
@@ -25,9 +29,12 @@ public class GameController implements KeyListener, Runnable {
     private HashSet<Integer> pressedKeys;
     private Thread gameThread;
     private volatile boolean gameRunning = false;
-    // Posizione iniziale della rana (centro-basso dello schermo)
-    private int startX = SCREEN_WIDTH / 2 - FROG_SIZE / 2;
-    private int startY= (SCREEN_HEIGHT * 82 / 100) - FROG_SIZE / 2;    
+    private int numberOfPlayers; // 1 o 2 giocatori
+    private boolean vsCPU; // true se il giocatore 2 è controllato dalla CPU
+    private AIController aiController; // rana della CPU, attivo solo se vsCPU è true
+    // Posizioni iniziali delle rane: se 1 giocatore, al centro; se 2, affiancate
+    private int[] startX;
+    private int startY = (SCREEN_HEIGHT * 82 / 100) - FROG_SIZE / 2;
 
     // Costruttore: inizializza finestra, listener tastiera e pulsanti di navigazione
     public GameController() {
@@ -63,11 +70,26 @@ public class GameController implements KeyListener, Runnable {
     }
 
     // Inizializza modello, vista e thread di gioco con il nome inserito dal giocatore
+    // Inizializza modello, vista e thread di gioco con i nomi inseriti dai giocatori
     private void startGame() {
-        String frogName = gameWindow.getTitlePanel().getFrogName();
-        
-        if (frogName.isEmpty()) {
-            frogName = "Frog";
+        this.numberOfPlayers = this.gameWindow.getTitlePanel().getNumberOfPlayers();
+        this.vsCPU = this.gameWindow.getTitlePanel().isVsCPU();
+        Difficulty difficulty = this.gameWindow.getTitlePanel().getDifficulty();
+
+        String[] frogNames = new String[numberOfPlayers];
+        frogNames[0] = this.gameWindow.getTitlePanel().getFrogName(0);
+        if (frogNames[0].isEmpty()) {
+            frogNames[0] = "Frog 1";
+        }
+        if (numberOfPlayers == 2) {
+            if (vsCPU) {
+                frogNames[1] = "CPU (" + difficultyLabel(difficulty) + ")";
+            } else {
+                frogNames[1] = this.gameWindow.getTitlePanel().getFrogName(1);
+                if (frogNames[1].isEmpty()) {
+                    frogNames[1] = "Frog 2";
+                }
+            }
         }
         
         // Crea mappa e modello
