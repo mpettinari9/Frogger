@@ -171,11 +171,6 @@ public class GameController implements KeyListener, Runnable {
             gameThread.start();
         }
     }
-    
-    private String difficultyLabel(Difficulty difficulty) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
     public void keyTyped(KeyEvent e) {
@@ -234,7 +229,13 @@ public class GameController implements KeyListener, Runnable {
         }
     }
 
-    // Converte MovingObjectType (modello) in MovingObjectTypeSprite (vista)
+
+	private void updateFrogs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// Converte MovingObjectType (modello) in MovingObjectTypeSprite (vista)
     private MovingObjectTypeSprite modelToViewMovingObjectTypeConverter(MovingObjectType type) {
         switch (type) {
             case CAR: return MovingObjectTypeSprite.CAR;
@@ -276,102 +277,116 @@ public class GameController implements KeyListener, Runnable {
         }
     }
 
-    // Legge i tasti premuti e invia i comandi di movimento al modello.
-    // Disattiva lo sprite se la rana è morta.
-    private void moveFrog() {
-        Frog frog = gameModel.getFrog();
-        if (frog.getLives() <= 0) {
-            gameWindow.getGamePanel().getFrogSprite().setSpriteActions(false);
+ // Legge i tasti premuti e invia i comandi di movimento al modello, per ciascuna rana.
+    // Giocatore 1 (indice 0, metà SINISTRA dello schermo): WASD (tasti a sinistra sulla tastiera).
+    // Giocatore 2 (indice 1, metà DESTRA dello schermo, se presente): freccette (tasti a destra sulla tastiera).
+    // L'abbinamento è scelto così che la posizione dei tasti sulla tastiera corrisponda
+    // alla posizione del giocatore sullo schermo.
+    private void moveFrogs() {
+        if (numberOfPlayers == 2 && vsCPU) {
+            // Contro la CPU: l'unico umano usa le freccette, la rana 2 è guidata dall'IA
+            moveFrog(0, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT);
+            boolean aiMoving = aiController.update();
+            gameWindow.getGamePanel().getFrogSprite(1).setSpriteActions(aiMoving);
+        } else if (numberOfPlayers == 2) {
+            moveFrog(0, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D);
+            moveFrog(1, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT);
+        } else {
+            // Con 1 solo giocatore si usano le freccette, più immediate
+            moveFrog(0, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT);
+        }
+    }
+
+  
+	// Converte la difficoltà scelta in un'etichetta leggibile per il nome della CPU
+    private String difficultyLabel(Difficulty difficulty) {
+        switch (difficulty) {
+            case EASY: return "Facile";
+            case HARD: return "Difficile";
+            default: return "Medio";
+        }
+    }
+    // Gestisce il movimento di una singola rana in base ai tasti assegnati.
+    // Una rana che ha già vinto (tutte le tane occupate) o è morta non si muove più.
+    private void moveFrog(int frogIndex, int upKey, int downKey, int leftKey, int rightKey) {
+        Frog frog = gameModel.getFrogs()[frogIndex];
+        if (frog.getLives() <= 0 || gameModel.hasFrogWon(frogIndex)) {
+            gameWindow.getGamePanel().getFrogSprite(frogIndex).setSpriteActions(false);
             return;
         }
 
         boolean isMoving = false;
-        
-        if (pressedKeys.contains(KeyEvent.VK_UP)) {
-            gameModel.moveFrogUp();
-            isMoving = true;
-        } 
-        if (pressedKeys.contains(KeyEvent.VK_LEFT)) {
-            gameModel.moveFrogLeft();
-            isMoving = true;
-        } 
-        if (pressedKeys.contains(KeyEvent.VK_DOWN)) {
-            gameModel.moveFrogDown();
-            isMoving = true;
-        } 
-        if (pressedKeys.contains(KeyEvent.VK_RIGHT)) {
-            gameModel.moveFrogRight();
+
+        if (pressedKeys.contains(upKey)) {
+            gameModel.moveFrogUp(frog);
             isMoving = true;
         }
-        
-        gameWindow.getGamePanel().getFrogSprite().setSpriteActions(isMoving);
+        if (pressedKeys.contains(leftKey)) {
+            gameModel.moveFrogLeft(frog);
+            isMoving = true;
+        }
+        if (pressedKeys.contains(downKey)) {
+            gameModel.moveFrogDown(frog);
+            isMoving = true;
+        }
+        if (pressedKeys.contains(rightKey)) {
+            gameModel.moveFrogRight(frog);
+            isMoving = true;
+        }
+
+        gameWindow.getGamePanel().getFrogSprite(frogIndex).setSpriteActions(isMoving);
     }
-    
-    // Aggiunge o rimuove lo sprite del cuore in base allo stato del modello
+
+
+
+
+    // Aggiunge o rimuove lo sprite del cuore per ciascun giocatore in base allo stato del modello
     private void updateHeart() {
-        if (gameModel.isHeartSpawned() && gameWindow.getGamePanel().getHeartSprite() == null) {
-            Heart heart = gameModel.getHeart();
-            gameWindow.getGamePanel().addHeart(heart.getX(), heart.getY());
-        } else if (!gameModel.isHeartSpawned() && gameWindow.getGamePanel().getHeartSprite() != null) {
-            gameWindow.getGamePanel().removeHeart();
+        for (int p = 0; p < numberOfPlayers; p++) {
+            if (gameModel.isHeartSpawned(p) && gameWindow.getGamePanel().getHeartSprite(p) == null) {
+                Heart heart = gameModel.getHeart(p);
+                gameWindow.getGamePanel().addHeart(p, heart.getX(), heart.getY());
+            } else if (!gameModel.isHeartSpawned(p) && gameWindow.getGamePanel().getHeartSprite(p) != null) {
+                gameWindow.getGamePanel().removeHeart(p);
+            }
         }
     }
-    
-    // Mostra il pannello dei risultati con nome rana e tempo di partita
-    private void showGameOver() {
-        Frog frog = gameModel.getFrog();
-        gameWindow.getResultPanel().setFrogResultText(
-            frog.getName() + ": Tempo " + gameModel.getDeath()
-        );
-        gameWindow.showResults();
-    }
-    
-    // Converte Direction (modello) in SpriteDirection (vista)
-    private SpriteDirection modelToViewDirectionConverter(Direction dir) {
-        switch (dir) {
-            case UP: return SpriteDirection.UP;
-            case DOWN: return SpriteDirection.DOWN;
-            case LEFT: return SpriteDirection.LEFT;
-            default: return SpriteDirection.RIGHT;
+
+    // Sincronizza gli sprite degli insetti nelle tane di tutti i giocatori
+    private void updateInsects() {
+        GamePanel panel = gameWindow.getGamePanel();
+        HomeSlot[][] allSlots = gameModel.getHomeSlots();
+
+        for (int p = 0; p < allSlots.length; p++) {
+            HomeSlot[] slots = allSlots[p];
+            for (int i = 0; i < slots.length; i++) {
+                HomeSlot slot = slots[i];
+                if (slot.hasInsect() && panel.getInsectSprite(p, i) == null) {
+                    panel.addInsect(p, i, slot.getX(), slot.getY());
+                } else if (!slot.hasInsect() && panel.getInsectSprite(p, i) != null) {
+                    panel.removeInsect(p, i);
+                }
+            }
         }
     }
-    
-    // Aggiorna posizione e direzione dello sprite della rana, poi lancia l'animazione
-    private void updateFrogSprite() {
-        Frog frog = gameModel.getFrog();
-        if (frog == null || gameWindow.getGamePanel().getFrogSprite() == null) 
-            return;
 
-        gameWindow.getGamePanel().getFrogSprite().setBounds(
-            frog.getPosition().getX(), 
-            frog.getPosition().getY(), 
-            FROG_SIZE, 
-            FROG_SIZE
-        );
-        gameWindow.getGamePanel().getFrogSprite().setDirection(
-            modelToViewDirectionConverter(frog.getDirection())
-        );
-        gameWindow.getGamePanel().getFrogSprite().performAnimation();
-    }
+	private void updateHomeSlots() {
+		// TODO Auto-generated method stub
+		
+	}
 
-    // Aggiorna la HUD del pannello di gioco: posizione rana, vite, posizioni oggetti e timer
-    private void updateFrog() {
-        Frog frog = gameModel.getFrog();
-        gameWindow.getGamePanel().updateGameWindow(
-            frog.getPosition().getX(),
-            frog.getPosition().getY(),
-            modelToViewDirectionConverter(frog.getDirection()),
-            frog.getLives(),
-            frog.getMaxLives(),
-            gameModel.getMovingObjects().stream()
-                .map(o -> o.getPosition().getX())
-                .collect(Collectors.toCollection(ArrayList::new)),
-            gameModel.getMovingObjects().stream()
-                .map(o -> o.getPosition().getY())
-                .collect(Collectors.toCollection(ArrayList::new)),
-            gameModel.getMatchDurationHours(),
-            gameModel.getMatchDurationMinutes(),
-            gameModel.getMatchDurationSeconds()
-        );
-    }
+	 private void updateFrogSprites() {
+			// TODO Auto-generated method stub
+			
+		}
+	
+	private void moveFrog() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void showGameOver() {
+		// TODO Auto-generated method stub
+		
+	}
 }

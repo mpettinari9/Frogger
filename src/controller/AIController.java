@@ -9,4 +9,9 @@ public class AIController {
 		// TODO Auto-generated constructor stub
 	}
 
+	public boolean update() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
