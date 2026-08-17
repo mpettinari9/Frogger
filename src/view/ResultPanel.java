@@ -8,56 +8,41 @@ import javax.swing.*;
  * Mostra il risultato della partita e il pulsante per ricominciare.
  */
 public class ResultPanel extends JPanel {
-	private JLabel title;
-	private JLabel frogResultText;
-	private JButton toTitlePanelButton; 
-	
+	private JLabel frogResultTextP1; // Risultato del Giocatore 1
+	private JLabel frogResultTextP2; // Risultato del Giocatore 2 (visibile solo in partite a 2 giocatori)
+	private JButton toTitlePanelButton;
+
+	// Palette colori in linea con il gioco
+	private static final Color VERDE_RANA   = new Color(0, 200, 0);
+	private static final Color GIALLO_TESTO = new Color(255, 220, 0);
+	private static final Color BLU_BOTTONE  = new Color(30, 30, 220);
+	private static final Color BIANCO       = Color.WHITE;
+	private static final Color PANNELLO_BG  = new Color(0, 0, 80, 200); // blu semitrasparente
+
 	public ResultPanel(int screenWidth, int screenHeight) {
 		this.setSize(screenWidth, screenHeight);
 		this.setLayout(null);
-	
-		this.title = new JLabel("");
-		this.frogResultText = new JLabel("");
-		
-		this.title.setBounds(0, screenHeight/5, screenWidth, screenHeight/5);
-		this.title.setFont(new Font("DIALOG", Font.BOLD, 60));
-		this.title.setForeground(Color.WHITE);
-		this.title.setHorizontalAlignment(JLabel.CENTER);
-		
-		this.frogResultText.setBackground(Color.gray);
-		this.frogResultText.setHorizontalAlignment(JLabel.CENTER);
-		this.frogResultText.setVerticalAlignment(JLabel.CENTER);
-		this.frogResultText.setBounds(0, screenHeight*2/5, screenWidth, screenHeight/5);
-		
-		this.toTitlePanelButton = new JButton("RICOMINCIA");
-		this.toTitlePanelButton.setBackground(Color.blue);
-		this.toTitlePanelButton.setFont(new Font("DIALOG", Font.BOLD,24));
-		this.toTitlePanelButton.setBounds(screenWidth/3, screenHeight*6/10, screenWidth/3, screenHeight/10);
-		
-		this.add(this.title);
-		this.add(this.frogResultText);
-		this.add(this.toTitlePanelButton);
-	}
-	
-	// Imposta il testo del titolo (es. "HAI VINTO" o "HAI PERSO").
-	public void setTitle(String titleText) {
-	    this.title.setText(titleText);
-	}
 
-	// Imposta il testo con il risultato della partita (nome e tempo).
-	public void setFrogResultText(String text) {
-		this.frogResultText.setText(text);	}
 	
-	private void setResultText(JLabel resultText, String result) {
-		resultText.setText(result);
-	}
-	
-	public JButton getToTitlePanelButton() {
-		return toTitlePanelButton;
-	}
-	
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.drawImage(new ImageIcon("src/view/Asset/sfondofrogger.png").getImage(), 0, 0, this.getWidth(), this.getHeight(), this);
+
+
+		// --- Riga risultato Giocatore 1 ---
+		this.frogResultTextP1 = new JLabel("");
+		this.frogResultTextP1.setForeground(VERDE_RANA);
+		this.frogResultTextP1.setFont(new Font("DIALOG", Font.BOLD, 20));
+		this.frogResultTextP1.setHorizontalAlignment(JLabel.CENTER);
+		this.frogResultTextP1.setVerticalAlignment(JLabel.CENTER);
+		// Posizionata sotto il titolo, sopra il bottone
+		this.frogResultTextP1.setBounds(screenWidth / 10, screenHeight * 48 / 100, screenWidth * 8 / 10, screenHeight / 12);
+
+		// --- Riga risultato Giocatore 2 ---
+		this.frogResultTextP2 = new JLabel("");
+		this.frogResultTextP2.setForeground(GIALLO_TESTO);
+		this.frogResultTextP2.setFont(new Font("DIALOG", Font.BOLD, 20));
+		this.frogResultTextP2.setHorizontalAlignment(JLabel.CENTER);
+		this.frogResultTextP2.setVerticalAlignment(JLabel.CENTER);
+		// Sotto la riga del giocatore 1, ancora sopra il bottone
+		this.frogResultTextP2.setBounds(screenWidth / 10, screenHeight * 57 / 100, screenWidth * 8 / 10, screenHeight / 12);
+		this.frogResultTextP2.setVisible(false);
 	}
 }
