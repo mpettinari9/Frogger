@@ -369,11 +369,35 @@ public class GameController implements KeyListener, Runnable {
             }
         }
     }
+    
+    // Aggiorna lo stato visivo (libera/occupata) di tutte le tane di tutti i giocatori
+    private void updateHomeSlots() {
+        GamePanel panel = gameWindow.getGamePanel();
+        HomeSlot[][] allSlots = gameModel.getHomeSlots();
 
-	private void updateHomeSlots() {
-		// TODO Auto-generated method stub
-		
-	}
+        for (int p = 0; p < allSlots.length; p++) {
+            HomeSlot[] slots = allSlots[p];
+            for (int i = 0; i < slots.length; i++) {
+                panel.updateHomeSlot(p, i, slots[i].isOccupied());
+            }
+        }
+    }
+
+    // Mostra il pannello dei risultati con nome, esito (vinto/perso), tempo e punteggio per ciascun giocatore
+    private void showGameOver() {
+        Frog[] frogs = gameModel.getFrogs();
+
+        gameWindow.getResultPanel().setFrogResultTextP1(buildResultText(0));
+
+        if (frogs.length == 2) {
+            gameWindow.getResultPanel().setFrogResultTextP2(buildResultText(1));
+        } else {
+            gameWindow.getResultPanel().setFrogResultTextP2("");
+        }
+
+        gameWindow.showResults();
+    }
+
 
 	 private void updateFrogSprites() {
 			// TODO Auto-generated method stub
@@ -381,11 +405,6 @@ public class GameController implements KeyListener, Runnable {
 		}
 	
 	private void moveFrog() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void showGameOver() {
 		// TODO Auto-generated method stub
 		
 	}
