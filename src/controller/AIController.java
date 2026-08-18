@@ -125,15 +125,71 @@ public class AIController {
 			return danger;
 		}
 
-		private Object desiredDirection(Frog frog) {
-			// TODO Auto-generated method stub
-			return null;
+		// La mossa che la rana vorrebbe fare per raggiungere la tana, ignorando del tutto la
+		// sicurezza (quella la verifica solo findRoadDirection): si allinea in orizzontale alla tana
+		// libera più vicina, poi avanza.
+		private Direction desiredDirection(Frog frog) {
+			HomeSlot target = nearestFreeSlot(frog);
+			if (target == null) {
+				return Direction.UP;
+			}
+			int targetCenterX = target.getX() + HomeSlot.SLOT_WIDTH / 2;
+			if (frog.getCenterX() < targetCenterX - ALIGN_TOLERANCE) {
+				return Direction.RIGHT;
+			}
+			if (frog.getCenterX() > targetCenterX + ALIGN_TOLERANCE) {
+				return Direction.LEFT;
+			}
+			return Direction.UP;
 		}
 
-		private List<int[]> nearbyThreats(Frog frog) {
-			// TODO Auto-generated method stub
-			return null;
+		private HomeSlot nearestFreeSlot(Frog frog) {
+			HomeSlot target = null;
+			int nearestDistance = Integer.MAX_VALUE;
+			for (HomeSlot slot : game.getHomeSlots(frogIndex)) {
+				if (slot.isOccupied()) {
+					continue;
+				}
+				int distance = Math.abs(slot.getX() - frog.getX());
+				if (distance < nearestDistance) {
+					target = slot;
+					nearestDistance = distance;
+				}
+			}
+			return target;
 		}
+
+		// Istantanea di auto/camion presenti (posizione, dimensione, velocità con segno): calcolata
+		// una sola volta per frame e riusata per tutte le mosse candidate, invece di rileggere lo
+		// stato del gioco ad ogni simulazione.
+		private List<int[]> nearbyThreats(Frog frog) {
+			List<int[]> threats = new ArrayList<>();
+			for (MovingObject obj : game.getMovingObjects(frogIndex)) {
+				MovingObjectType type = obj.getMovingObjectType();
+				if (type != MovingObjectType.CAR && type != MovingObjectType.TRUCK) {
+					continue;
+				}
+				int vx = (obj.getDirection() == Direction.RIGHT) ? obj.getSpeed() : -obj.getSpeed();
+				threats.add(new int[] { obj.getPosition().getX(), obj.getPosition().getY(),
+						obj.getSize().getWidth(), obj.getSize().getHeight(), vx });
+			}
+			return threats;
+		}
+		
+
+		// --- Acqua ---
+
+		// Restare a galla non è mai lasciato al caso: un errore qui significa annegare all'istante.
+		private Direction findWaterDirection(Frog frog) {
+			if (!isOnPlatform(frog)) {
+				return findSwimDirection(frog);
+			}
+			// Sopra una zattera l'allineamento orizzontale con la tana non conta: la corrente la
+			// sposta comunque, quindi cercare di correggerlo significherebbe solo remare contro la
+			// corrente all'infinito, restando bloccata invece di avanzare. Meglio continuare su.
+			return Direction.UP;
+		}
+
 		
 		private void applyMove(Frog frog, Direction direction) {
 			// TODO Auto-generated method stub
@@ -149,5 +205,10 @@ public class AIController {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+		public boolean update() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 
 }
