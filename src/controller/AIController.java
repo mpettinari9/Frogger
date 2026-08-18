@@ -238,16 +238,40 @@ public class AIController {
 			return frogTop < objBottom && frogBottom > objTop;
 		}
 
-		
-		private void applyMove(Frog frog, Direction direction) {
-			// TODO Auto-generated method stub
-			
+		// --- Comune ---
+
+		// Un "errore" della difficoltà è un'incertezza nell'allineamento (va verso il lato sbagliato),
+		// non una mossa suicida: non deve mai poter bypassare i controlli di sicurezza su strada o
+		// acqua scegliendo UP/DOWN alla cieca, altrimenti capiterebbe prima o poi di annegare o
+		// finire sotto un'auto proprio per un tiro a caso sfortunato.
+		private Direction randomDirection() {
+			return rnd.nextBoolean() ? Direction.LEFT : Direction.RIGHT;
 		}
 
-		private Direction randomDirection() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		private void applyMove(Frog frog, Direction direction) {
+			if (direction == null) {
+				return;
+			}
+			// Nessuna mossa può farla entrare in acqua se in quel preciso istante non c'è davvero
+			// un tronco o una tartaruga ad aspettarla: controllato sui dati più freschi possibile,
+			// appena prima del passo vero e proprio, non con una previsione a lungo raggio che
+			// potrebbe non essere più valida quando ci arriva davvero.
+			if (direction == Direction.UP && wouldEnterWaterUnsafely(frog)) {
+				return;
+			}
+			switch (direction) {
+				case UP:    game.moveFrogUp(frog);    break;
+				case DOWN:  game.moveFrogDown(frog);  break;
+				case LEFT:  game.moveFrogLeft(frog);  break;
+				case RIGHT: game.moveFrogRight(frog); break;
+			}
+		}
+		
+	
+		private boolean wouldEnterWaterUnsafely(Frog frog) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 
 		public boolean update() {
 			// TODO Auto-generated method stub
