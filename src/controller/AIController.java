@@ -52,6 +52,59 @@ public class AIController {
 		this.rnd = game.getRandomNumberGenerator();
 	}
 
+	// Chiamato una volta per frame dal game loop.
+		// Restituisce true se la rana si sta muovendo (usato dalla vista per l'animazione).
+		public boolean update() {
+			Frog frog = game.getFrogs()[frogIndex];
+			if (frog == null || frog.isDead() || game.hasFrogWon(frogIndex)) {
+				return false;
+			}
+
+			// L'errore casuale della difficoltà resta scandito dal tempo di reazione: rappresenta
+			// un'esitazione strategica occasionale, non va rivalutato ad ogni frame. La sicurezza vera
+			// e propria (sotto) invece è sempre rivalutata ad ogni frame, altrimenti la si scoprirebbe
+			// troppo tardi.
+			frameCounter++;
+			boolean mistakeNow = false;
+			if (frameCounter >= difficulty.getReactionInterval()) {
+				frameCounter = 0;
+				mistakeNow = rnd.nextInt(100) < difficulty.getMistakePercent();
+			}
+
+			Direction direction = mistakeNow ? randomDirection()
+					: frog.isInWaterArea() ? findWaterDirection(frog) : findRoadDirection(frog);
+
+			applyMove(frog, direction);
+			return direction != null;
+		}
+
+		// --- Strada ---
+
+		// Sceglie la mossa da fare sulla strada: parte dalla mossa "ideale" per avvicinarsi alla tana
+		// (allinearsi in orizzontale, poi avanzare) e la scarta solo se la simulazione mostra che
+		// porterebbe a passare del tempo in territorio pericoloso. Prova quindi le alternative in
+		// ordine di preferenza; se nessuna è completamente libera da rischi, sceglie quella che ne
+		// accumula di meno (nessuna lo è mai del tutto per sempre in una corsia trafficata: l'obiettivo
+		// qui è la scelta migliore nell'immediato, non una garanzia assoluta).
+		private Direction findRoadDirection(Frog frog) {
+			List<int[]> threats = nearbyThreats(frog);
+			Direction[] candidates = buildCandidates(desiredDirection(frog));
+
+			Direction best = null;
+			int bestDanger = Integer.MAX_VALUE;
+			for (Direction candidate : candidates) {
+				int danger = countDangerSteps(frog, candidate, threats);
+				if (danger == 0) {
+					return candidate;
+				}
+				if (danger < bestDanger) {
+					bestDanger = danger;
+					best = candidate;
+				}
+			}
+			return best;
+		}
+		
 		// Ordine dei tentativi: prima la mossa desiderata, poi restare ferma, infine scivolare di
 		// lato. Restare ferma viene prima dello scivolamento laterale perché, mosse in orizzontale
 		// che non toccano la corsia attuale, risultano quasi sempre "sicure per tutto l'orizzonte"
@@ -267,15 +320,45 @@ public class AIController {
 			}
 		}
 		
+		
+		
+		
+		
+		
+		
 	
+		// Vero se, facendo subito un passo in su, la rana si troverebbe in acqua senza un tronco o
+		// una tartaruga proprio sotto di sé in quel preciso istante.
 		private boolean wouldEnterWaterUnsafely(Frog frog) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+			int nextTop = frog.getY() - MOVE_STEP;
+			int nextBottom = nextTop + frog.getHeight();
+			int nextCenterY = nextTop + frog.getHeight() / 2;
+			int riverTop = game.getMap().getRiverTop();
+			int riverBottom = game.getMap().getRiverBottom();
 
-		public boolean update() {
-			// TODO Auto-generated method stub
-			return false;
+			if (nextCenterY < riverTop || nextCenterY > riverBottom) {
+				return false; // il prossimo passo non la porta comunque in acqua
+			}
+
+			int frogLeft = frog.getX();
+			int frogRight = frogLeft + frog.getWidth();
+			for (MovingObject obj : game.getMovingObjects(frogIndex)) {
+				MovingObjectType type = obj.getMovingObjectType();
+				if (type != MovingObjectType.TURTLE && type != MovingObjectType.TRUNK) {
+					continue;
+				}
+				int objTop = obj.getPosition().getY();
+				int objBottom = objTop + obj.getSize().getHeight();
+				if (nextTop >= objBottom || nextBottom <= objTop) {
+					continue;
+				}
+				int objLeft = obj.getPosition().getX();
+				int objRight = objLeft + obj.getSize().getWidth();
+				if (frogLeft < objRight && frogRight > objLeft) {
+					return false; // c'è davvero una zattera proprio lì
+				}
+			}
+			return true;
 		}
 
 }
