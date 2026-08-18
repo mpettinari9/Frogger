@@ -135,9 +135,9 @@ public class JUnitTests {
 
 	@Test
 	public void testCheckMovingObjectNoCollision() {
-		Game game = new Game(map);
+		Game game = new Game(map, 1);
 		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(0, 500), map, 2);
-		game.setFrog(f);
+		game.setFrog(0, f);
 		MovingObject car = new MovingObject(900, 500, MovingObjectType.CAR, map, 0);
 		car.setDirection(Direction.RIGHT);
 		game.addMovingObject(car);
@@ -154,10 +154,10 @@ public class JUnitTests {
 
 	@Test
 	public void testCheckHeartCollision() {
-		Game game = new Game(map);
+		Game game = new Game(map, 1);
 		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
 		f.loseLife(); // 1 vita rimasta
-		game.setFrog(f);
+		game.setFrog(0, f);
 		// Forza spawn del cuore nella stessa posizione della rana
 		// Verifica che dopo la collisione le vite si resettino
 		assertEquals(1, f.getLives());
@@ -165,9 +165,9 @@ public class JUnitTests {
 
 	@Test
 	public void testGameOverOnLivesZero() {
-		Game game = new Game(map);
+		Game game = new Game(map, 1);
 		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
-		game.setFrog(f);
+		game.setFrog(0, f);
 		f.loseLife();
 		f.loseLife();
 		assertTrue(game.checkGameOver());
@@ -175,9 +175,9 @@ public class JUnitTests {
 
 	@Test
 	public void testGameNotOverWithLives() {
-		Game game = new Game(map);
+		Game game = new Game(map, 1);
 		Frog f = new Frog("T", Direction.UP, new Size(50, 50), new Position(615, 565), map, 2);
-		game.setFrog(f);
+		game.setFrog(0, f);
 		assertFalse(game.checkGameOver());
 	}
 	
