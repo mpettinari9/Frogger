@@ -198,7 +198,7 @@ public class GameController implements KeyListener, Runnable {
             long startTime = System.currentTimeMillis();
 
             if (gameModel != null) {
-                 moveFrog(); // Legge input e muove rana
+                 moveFrogs(); // Legge input e muove rana
                 
                 gameModel.update(); // Aggiorna stato del modello (oggetti, collisioni, cuore)
                
@@ -228,12 +228,6 @@ public class GameController implements KeyListener, Runnable {
             }
         }
     }
-
-
-	private void updateFrogs() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	// Converte MovingObjectType (modello) in MovingObjectTypeSprite (vista)
     private MovingObjectTypeSprite modelToViewMovingObjectTypeConverter(MovingObjectType type) {
@@ -419,13 +413,57 @@ public class GameController implements KeyListener, Runnable {
         }
     }
 
-	 private void updateFrogSprites() {
-			// TODO Auto-generated method stub
-			
-		}
-	
-	private void moveFrog() {
-		// TODO Auto-generated method stub
-		
-	}
+    // Aggiorna posizione e direzione dello sprite di ciascuna rana, poi lancia l'animazione
+    private void updateFrogSprites() {
+        Frog[] frogs = gameModel.getFrogs();
+        int panelWidth = SCREEN_WIDTH / numberOfPlayers;
+        for (int i = 0; i < frogs.length; i++) {
+            Frog frog = frogs[i];
+            FrogSprite sprite = gameWindow.getGamePanel().getFrogSprite(i);
+            if (frog == null || sprite == null) continue;
+
+            int localX = (numberOfPlayers == 1) ? frog.getPosition().getX()
+                                                 : frog.getPosition().getX() - i * panelWidth;
+            sprite.setBounds(
+                    localX,
+                    frog.getPosition().getY(),
+                    FROG_SIZE,
+                    FROG_SIZE
+            );
+            sprite.setDirection(
+                    modelToViewDirectionConverter(frog.getDirection())
+            );
+            sprite.performAnimation();
+        }
+    }
+
+    // Aggiorna la HUD del pannello di gioco per ciascuna rana
+    private void updateFrogs() {
+        Frog[] frogs = gameModel.getFrogs();
+
+        for (int i = 0; i < frogs.length; i++) {
+            Frog frog = frogs[i];
+            ArrayList<Integer> movingX = gameModel.getMovingObjects(i).stream()
+                    .map(o -> o.getPosition().getX())
+                    .collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Integer> movingY = gameModel.getMovingObjects(i).stream()
+                    .map(o -> o.getPosition().getY())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            gameWindow.getGamePanel().updateGameWindow(
+                    i,
+                    frog.getPosition().getX(),
+                    frog.getPosition().getY(),
+                    modelToViewDirectionConverter(frog.getDirection()),
+                    frog.getLives(),
+                    frog.getMaxLives(),
+                    movingX,
+                    movingY,
+                    gameModel.getMatchDurationHours(),
+                    gameModel.getMatchDurationMinutes(),
+                    gameModel.getMatchDurationSeconds(),
+                    gameModel.getScore(i)
+            );
+        }
+    }
 }
