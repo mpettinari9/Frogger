@@ -290,7 +290,6 @@ public class GameController implements KeyListener, Runnable {
             moveFrog(0, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT);
         }
     }
-
   
 	// Converte la difficoltà scelta in un'etichetta leggibile per il nome della CPU
     private String difficultyLabel(Difficulty difficulty) {
@@ -300,6 +299,7 @@ public class GameController implements KeyListener, Runnable {
             default: return "Medio";
         }
     }
+    
     // Gestisce il movimento di una singola rana in base ai tasti assegnati.
     // Una rana che ha già vinto (tutte le tane occupate) o è morta non si muove più.
     private void moveFrog(int frogIndex, int upKey, int downKey, int leftKey, int rightKey) {
