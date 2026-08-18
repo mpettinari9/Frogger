@@ -52,9 +52,102 @@ public class AIController {
 		this.rnd = game.getRandomNumberGenerator();
 	}
 
-	public boolean update() {
+		// Ordine dei tentativi: prima la mossa desiderata, poi restare ferma, infine scivolare di
+		// lato. Restare ferma viene prima dello scivolamento laterale perché, mosse in orizzontale
+		// che non toccano la corsia attuale, risultano quasi sempre "sicure per tutto l'orizzonte"
+		// anche quando non serve muoversi affatto: se venissero provate prima, la rana vagherebbe
+		// di lato ogni volta che avanzare non è *subito* possibile, invece di aspettare il momento
+		// giusto. Lo scivolamento laterale resta comunque disponibile come ultima risorsa, per i casi
+		// in cui anche restare ferma non è sicuro (schiacciata da una minaccia sulla propria corsia).
+		// Retrocedere (DOWN) non è mai un'opzione.
+		private Direction[] buildCandidates(Direction desired) {
+			if (desired == Direction.UP) {
+				return new Direction[] { Direction.UP, null, Direction.LEFT, Direction.RIGHT };
+			}
+			Direction other = (desired == Direction.LEFT) ? Direction.RIGHT : Direction.LEFT;
+			return new Direction[] { desired, Direction.UP, null, other };
+		}
+		
+		// Simula la mossa data per "horizon" frame, muovendo la rana passo passo e le minacce alla
+		// loro velocità nota, e conta per quanti di quei passi la rana si troverebbe in territorio
+		// pericoloso (sovrapposta, col margine della difficoltà, a un'auto/camion). Conta l'intero
+		// orizzonte invece di fermarsi al primo passo pericoloso: se la rana è già a ridosso di una
+		// minaccia, il primo passo può risultare "in pericolo" per QUALSIASI mossa candidata (non si
+		// è ancora avuto il tempo di divergere), e fermarsi lì renderebbe il confronto tra le mosse
+		// arbitrario invece che informativo. Guardando l'intero orizzonte, una mossa che si allontana
+		// davvero accumula molti meno passi pericolosi di una che resta bloccata al fianco della
+		// minaccia, anche se il primissimo passo sembra ugualmente rischioso per entrambe.
+		private int countDangerSteps(Frog frog, Direction move, List<int[]> threats) {
+			if (threats.isEmpty()) {
+				return 0;
+			}
+			int fx = frog.getX();
+			int fy = frog.getY();
+			int fw = frog.getWidth();
+			int fh = frog.getHeight();
+			int minX = frog.getMinX();
+			int maxX = frog.getMaxX();
+			int danger = 0;
+
+			for (int step = 1; step <= HORIZON_FRAMES; step++) {
+				if (move == Direction.UP) {
+					fy -= MOVE_STEP;
+				} else if (move == Direction.LEFT) {
+					fx = Math.max(minX, fx - MOVE_STEP);
+				} else if (move == Direction.RIGHT) {
+					fx = Math.min(maxX, fx + MOVE_STEP);
+				}
+				// null (restare ferma): nessuno spostamento.
+
+				for (int[] threat : threats) {
+					int oy = threat[1];
+					int ow = threat[2];
+					int oh = threat[3];
+					int vx = threat[4];
+					int ox = threat[0] + vx * step;
+					// Margine di sicurezza orizzontale della difficoltà: più è cauta, più "estende" il
+					// bordo d'attacco dell'ostacolo (quello nella direzione in cui si muove), reagendo
+					// quando l'ostacolo è ancora a distanza di sicurezza invece che al contatto vero e
+					// proprio. Solo il bordo d'attacco conta: quello opposto non si sta avvicinando.
+					int pad = difficulty.getSafeGap();
+					if (vx > 0) {
+						ow += pad; // si muove verso destra: estende il bordo destro
+					} else {
+						ox -= pad; // si muove verso sinistra: estende il bordo sinistro
+						ow += pad;
+					}
+					if (fx < ox + ow && fx + fw > ox && fy < oy + oh && fy + fh > oy) {
+						danger++;
+						break; // un ostacolo alla volta basta per contare questo passo come pericoloso
+					}
+				}
+			}
+			return danger;
+		}
+
+		private Object desiredDirection(Frog frog) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		private List<int[]> nearbyThreats(Frog frog) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		private void applyMove(Frog frog, Direction direction) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		private Direction findWaterDirection(Frog frog) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		private Direction randomDirection() {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
 }
