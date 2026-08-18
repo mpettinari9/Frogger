@@ -190,15 +190,58 @@ public class AIController {
 			return Direction.UP;
 		}
 
+		// Verifica se la rana è attualmente sopra una tartaruga o un tronco
+		private boolean isOnPlatform(Frog frog) {
+			for (MovingObject obj : game.getMovingObjects(frogIndex)) {
+				MovingObjectType type = obj.getMovingObjectType();
+				if ((type == MovingObjectType.TURTLE || type == MovingObjectType.TRUNK)
+						&& frog.getHitBox().intersects(obj.getHitBox())) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// Cerca la tartaruga/tronco più vicino nella stessa corsia e si dirige verso di esso
+		private Direction findSwimDirection(Frog frog) {
+			MovingObject nearest = null;
+			int nearestDistance = Integer.MAX_VALUE;
+
+			for (MovingObject obj : game.getMovingObjects(frogIndex)) {
+				MovingObjectType type = obj.getMovingObjectType();
+				if (type != MovingObjectType.TURTLE && type != MovingObjectType.TRUNK) {
+					continue;
+				}
+				if (!sharesLane(frog, obj)) {
+					continue;
+				}
+
+				int distance = Math.abs(obj.getPosition().getX() - frog.getX());
+				if (distance < nearestDistance) {
+					nearest = obj;
+					nearestDistance = distance;
+				}
+			}
+
+			if (nearest == null) {
+				return null;
+			}
+			return (nearest.getPosition().getX() > frog.getX()) ? Direction.RIGHT : Direction.LEFT;
+		}
+		
+		// Vero se le fasce verticali di rana e ostacolo si sovrappongono (con un piccolo anticipo).
+		private boolean sharesLane(Frog frog, MovingObject obj) {
+			int frogTop = frog.getY() - ENTER_MARGIN;
+			int frogBottom = frog.getY() + frog.getHeight() + ENTER_MARGIN;
+			int objTop = obj.getPosition().getY();
+			int objBottom = objTop + obj.getSize().getHeight();
+			return frogTop < objBottom && frogBottom > objTop;
+		}
+
 		
 		private void applyMove(Frog frog, Direction direction) {
 			// TODO Auto-generated method stub
 			
-		}
-
-		private Direction findWaterDirection(Frog frog) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		private Direction randomDirection() {
